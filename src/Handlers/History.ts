@@ -8,7 +8,13 @@
  */
 
 class History {
-    // History class implementation
+    private _session_id!: string;
+    private _user_id!: string;
+
+    constructor(session_id: string, user_id: string) {
+        this._session_id = session_id;
+        this._user_id = user_id;
+    }
 }
 
 export default History;

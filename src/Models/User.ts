@@ -9,8 +9,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { getMyId, getProfile } from '../Authorization/Msgraph.ts';
-import AuthorizationError from '../Authorization/AuthorizationError.ts';
-import { constants } from 'buffer';
+import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
 
 
 class User {

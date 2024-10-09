@@ -6,48 +6,78 @@
  * 
  * @author Dustin Morris
  */
-
+import { v4 as uuidv4 } from 'uuid';
 import Chat from './Chat.js';
 import Feedback from './Feedback.js';
 import History from './History.js';
 import User from '../Models/User.js';
 import { constants } from '../constants.js';
+import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
+import SessionError from './Errors/SessionError.js';
 
 class Session {
-    private chat!: Chat;
-    private feedback!: Feedback;
-    private history!: History;
-    private user!: User;
+    private _chat!: Chat;
+    private _feedback!: Feedback;
+    private _history!: History;
+    private _user!: User;
+    private _session_id!: string;
     
-    constructor() {
+    constructor(session_id: string | undefined) {
         try {
-            this.initialize();
+            this.initialize(session_id);
         }
         catch (error) {
-            // TODO: Tell the UI somehow there is an error
+            if (constants.debug) {
+                console.error(error);
+            }
+            else if (error instanceof AuthorizationError) {
+                // TODO: Tell the UI somehow there is an authorization error
+            }
+            else if (error instanceof SessionError) {
+                // TODO: Tell the UI somehow there is a session error
+            }
         }
     }
 
-    private initialize() {
+    private initialize(session_id: string | undefined) {
         this.initializeUser();
-        this.chat = new Chat();
-        this.feedback = new Feedback();
-        this.history = new History();
+        if (this._user) {
+            if(session_id) {
+                this._session_id = session_id;  //TODO: validate session id
+            }
+            else {
+                this._session_id = uuidv4();  // ui didn't give us a session id so we create a new one
+            }
+            this.initializeHandlers();
+        }
     }
 
     private initializeUser() {
-        if (!this.user && constants.useauth)
+        if (!this._user && constants.useauth)
         {
-            // populate user from auth
-            this.user = new User(false);
+            this._user = new User(false); // populate user from auth
         }
-        this.user = new User(true);
+        this._user = new User(true); // anonymous user
+    }
+
+    private initializeHandlers() {
+        if (!this._session_id) {
+            throw new SessionError("Session ID not defined"); // This should never happen
+        }
+        else if (!this._user || !this._user.user_id) {
+            throw new SessionError("User not defined"); // This should never happen
+        }
+        else {
+            const userId = this._user.user_id as string;
+            this._chat = new Chat(this._session_id, userId);
+            this._feedback = new Feedback(this._session_id, userId);
+            this._history = new History(this._session_id, userId);
+        }
     }
 
     private getUserFromUI() {
         return {}
     }
-    // Session class implementation
 }
 
 export default Session;
