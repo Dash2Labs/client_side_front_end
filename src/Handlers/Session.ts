@@ -15,6 +15,9 @@ import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
 import SessionError from './Errors/SessionError.js';
 import Communicator from './Communicator.js';
+import { ChatObject } from './Chat.js';
+import { FeedbackObject } from './Feedback.js';
+import { HistoryObject } from './History.js';
 
 class Session {
     private _chat!: Chat;
@@ -40,6 +43,53 @@ class Session {
             }
         }
     }
+
+    /**
+     * @description This is a callback function for the ui to send a chat message
+     */
+    public sendChat(question: ChatObject) {
+        return this._chat.sendQuestion(question);
+    }
+
+    /**
+     * @description This is a callback function for the ui to send feedback
+     */
+    public sendFeedback(feedback: FeedbackObject) {
+        return this._feedback.sendFeedback(feedback);
+    }
+
+    /**
+     * @description This is a callback function for the ui to get the history
+     */
+    public getHistory(): HistoryObject {
+        return this._history.getHistory();
+    }
+
+    /**
+     *@description This is a callback function for the ui to get configuration settings  
+     */
+     public getSettings() {
+    }
+
+    /**
+     *@description This is a callback function for the ui to set configuration settings  
+     */
+     public setSettings() {
+    }
+
+    // TODO: Since we are setting configuration for the user we should be able to save their configuration
+    // TODO: These callbacks should be in implented in the ui and not here
+    // /**
+    //  * @description This is a callback function for the client to request the user sign in from the ui
+    //  */
+    // public requestSignIn() {
+    // }
+
+    // /**
+    //  * @description This is a callback function for the client to request the user sign out from the ui
+    //  */
+    // public requestSignOut() {
+    // }
 
     private initialize(session_id: string | undefined) {
         this.initializeUser();
@@ -78,10 +128,6 @@ class Session {
             this._feedback = new Feedback(this._communicator);
             this._history = new History(this._communicator);
         }
-    }
-
-    private getUserFromUI() {
-        return {}
     }
 }
 

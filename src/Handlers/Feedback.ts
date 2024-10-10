@@ -24,8 +24,8 @@ class Feedback {
     constructor (communicator: Communicator) {
         this._communicator = communicator;
     }
-    
-    public sendFeedBack(feedback: FeedbackObject): boolean{
+
+    public sendFeedback(feedback: FeedbackObject): boolean{
         const response = this._communicator.sendFeedback(feedback); // TODO: Do we need to verify we have cleaned data here?
         return response.status === 200;
     }
