@@ -29,6 +29,9 @@ class Feedback {
         const response = this._communicator.sendFeedback(feedback); // TODO: Do we need to verify we have cleaned data here?
         return response.status === 200;
     }
+
+    [Symbol.dispose](): void {
+    }
 }
 
 export default Feedback;

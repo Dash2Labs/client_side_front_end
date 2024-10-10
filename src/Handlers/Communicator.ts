@@ -135,6 +135,9 @@ class Communicator {
         };
         this._config = { headers };
     }
+
+    [Symbol.dispose](): void {
+    }
 }
 
 export default Communicator;

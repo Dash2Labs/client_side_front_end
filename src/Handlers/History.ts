@@ -25,6 +25,9 @@ class History {
         const response = this._communicator.getHistory();
         return {history: response.data} as HistoryObject;
     }
+
+    [Symbol.dispose](): void {
+    }
 }
 
 export default History;

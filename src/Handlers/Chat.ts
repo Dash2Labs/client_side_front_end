@@ -25,6 +25,9 @@ class Chat {
         const response = this._communicator.sendChat(question); // TODO: Do we need to verify we have cleaned data here?
         return response.data as Message;
     }
+
+    [Symbol.dispose](): void {
+    }
 }
 
 export default Chat;

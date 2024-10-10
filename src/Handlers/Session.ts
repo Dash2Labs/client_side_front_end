@@ -18,8 +18,9 @@ import Communicator from './Communicator.js';
 import { ChatObject } from './Chat.js';
 import { FeedbackObject } from './Feedback.js';
 import { HistoryObject } from './History.js';
+import { EventEmitter } from 'events';
 
-class Session {
+export class Session {
     private _chat!: Chat;
     private _feedback!: Feedback;
     private _history!: History;
@@ -79,18 +80,7 @@ class Session {
     }
 
     // TODO: Since we are setting configuration for the user we should be able to save their configuration
-    // TODO: These callbacks should be in implented in the ui and not here
-    // /**
-    //  * @description This is a callback function for the client to request the user sign in from the ui
-    //  */
-    // public requestSignIn() {
-    // }
-
-    // /**
-    //  * @description This is a callback function for the client to request the user sign out from the ui
-    //  */
-    // public requestSignOut() {
-    // }
+    
 
     private initialize(session_id: string | undefined) {
         this.initializeUser();
@@ -130,6 +120,50 @@ class Session {
             this._history = new History(this._communicator);
         }
     }
+
+    [Symbol.dispose]() {
+        this._chat[Symbol.dispose]();
+        this._feedback[Symbol.dispose]();
+        this._history[Symbol.dispose]();
+        this._user[Symbol.dispose]();
+        this._communicator[Symbol.dispose]();
+    }
 }
 
-export default Session;
+class HandleSignIn extends EventEmitter {
+    private _session_id!: string;
+    public _session?: Session;
+
+    constructor() {
+        super();
+        this._session_id = this.getSessionFromCookie();
+    }
+
+    public signIn() {
+        if (!this._session) {
+            if (this._session_id) {
+                this._session = new Session(this._session_id);
+            }
+        }
+        this.emit("signedIn", this._session);
+    }
+
+    public signOut() {
+        if (this._session) {
+            this._session[Symbol.dispose]();
+            this._session = undefined;
+            this._session_id = "";
+            this.setSessionCookie(this._session_id);
+            this.emit("signedOut", this._session);
+        }
+    }
+
+    private getSessionFromCookie() {
+        return "";
+    }
+
+    private setSessionCookie(session_id: string) {
+    }
+}
+
+export default HandleSignIn;

@@ -43,6 +43,9 @@ class User {
     set photo(photo: string) {
         this._photo = photo;
     }
+
+    [Symbol.dispose]() {
+    }
 };
 
 class NewUser {
