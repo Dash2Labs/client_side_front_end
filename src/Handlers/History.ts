@@ -1,19 +1,29 @@
 /**
- * @file Session.ts
- * @description This file contains the Session class which handles history of user sessions.
+ * @file History.ts
+ * @description This file contains the History class which handles history of user sessions.
  * @version 1.0.0
  * @date 2023-10-05
  * 
  * @author Dustin Morris
  */
 
-class History {
-    private _session_id!: string;
-    private _user_id!: string;
+import Communicator from "./Communicator.ts";
+import { Message } from "../Models/Message.ts";
 
-    constructor(session_id: string, user_id: string) {
-        this._session_id = session_id;
-        this._user_id = user_id;
+export interface HistoryObject {
+    history: Message[];
+};
+
+class History {
+    private _communicator!: Communicator;
+
+    constructor(communicator: Communicator) {
+        this._communicator = communicator;
+    }
+
+    public getHistory(): HistoryObject {
+        const response = this._communicator.getHistory();
+        return {history: response.data} as HistoryObject;
     }
 }
 

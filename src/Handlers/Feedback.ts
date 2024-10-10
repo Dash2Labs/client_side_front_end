@@ -1,5 +1,5 @@
 /**
- * @file Session.ts
+ * @file Feedback.ts
  * @description This file contains the Feedback class which handles user feedback communications to the client server.
  * @version 1.0.0
  * @date 2023-10-05
@@ -19,18 +19,15 @@ export interface FeedbackObject {
 }
 
 class Feedback {
-    private _session_id!: string;
-    private _user_id!: string;
-    private _communicator!: Communicator;
+    private _communicator: Communicator;
 
-    constructor(session_id: string, user_id: string) {
-        this._session_id = session_id;
-        this._user_id = user_id;
-        this._communicator = new Communicator();
+    constructor (communicator: Communicator) {
+        this._communicator = communicator;
     }
-
-    public sendFeedBack(feedback: FeedbackObject): void{
-        this._communicator.sendFeedback(feedback, this._session_id, this._user_id); // TODO: Do we need to verify we have cleaned data here?
+    
+    public sendFeedBack(feedback: FeedbackObject): boolean{
+        const response = this._communicator.sendFeedback(feedback); // TODO: Do we need to verify we have cleaned data here?
+        return response.status === 200;
     }
 }
 

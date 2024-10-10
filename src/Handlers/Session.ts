@@ -14,6 +14,7 @@ import User from '../Models/User.js';
 import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
 import SessionError from './Errors/SessionError.js';
+import Communicator from './Communicator.js';
 
 class Session {
     private _chat!: Chat;
@@ -21,6 +22,7 @@ class Session {
     private _history!: History;
     private _user!: User;
     private _session_id!: string;
+    private _communicator!: Communicator;
     
     constructor(session_id: string | undefined) {
         try {
@@ -48,7 +50,11 @@ class Session {
             else {
                 this._session_id = uuidv4();  // ui didn't give us a session id so we create a new one
             }
+            this._communicator = new Communicator(this._session_id, this._user.user_id as string);
             this.initializeHandlers();
+        }
+        else {
+            throw new AuthorizationError("User not authorized");
         }
     }
 
@@ -68,10 +74,9 @@ class Session {
             throw new SessionError("User not defined"); // This should never happen
         }
         else {
-            const userId = this._user.user_id as string;
-            this._chat = new Chat(this._session_id, userId);
-            this._feedback = new Feedback(this._session_id, userId);
-            this._history = new History(this._session_id, userId);
+            this._chat = new Chat(this._communicator);
+            this._feedback = new Feedback(this._communicator);
+            this._history = new History(this._communicator);
         }
     }
 
