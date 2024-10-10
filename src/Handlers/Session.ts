@@ -35,11 +35,12 @@ class Session {
             if (constants.debug) {
                 console.error(error);
             }
-            else if (error instanceof AuthorizationError) {
-                // TODO: Tell the UI somehow there is an authorization error
-            }
-            else if (error instanceof SessionError) {
-                // TODO: Tell the UI somehow there is a session error
+            else {
+                if (error instanceof Error) {
+                    throw new SessionError("Session initialization failed: " + error.message + " " + error.stack);
+                } else {
+                    throw new SessionError("Session initialization failed: Unknown error");
+                }
             }
         }
     }

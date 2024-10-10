@@ -11,7 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { getMyId, getProfile } from '../Authorization/Msgraph.ts';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
 
-
 class User {
     private _user_id?: string = "";
     private _photo?: string = "";
