@@ -1,6 +1,6 @@
 /**
  * @file Session.ts
- * @description This file contains the Session class which handles user sessions.
+ * @description This file contains the Session class which handles user sessions. And the HandleSignIn event emitter class which handles user sign in and sign out.
  * @version 1.0.0
  * @date 2023-10-05
  * 
@@ -25,12 +25,15 @@ export class Session {
     private _feedback!: Feedback;
     private _history!: History;
     private _user!: User;
-    private _session_id!: string;
     private _communicator!: Communicator;
-    
+    public createdAt!: Date;
+    public expiresAt: Date = new Date(this.createdAt.getTime() + 3600000); // 1 hour
+    public session_id!: string;
+
     constructor(session_id: string | undefined) {
         try {
             this.initialize(session_id);
+            this.createdAt = new Date();
         }
         catch (error) {
             if (constants.debug) {
@@ -86,12 +89,12 @@ export class Session {
         this.initializeUser();
         if (this._user) {
             if(session_id) {
-                this._session_id = session_id;  //TODO: validate session id
+                this.session_id = session_id;  //TODO: validate session id
             }
             else {
-                this._session_id = uuidv4();  // ui didn't give us a session id so we create a new one
+                this.session_id = uuidv4();  // ui didn't give us a session id so we create a new one
             }
-            this._communicator = new Communicator(this._session_id, this._user.user_id as string);
+            this._communicator = new Communicator(this.session_id, this._user.user_id as string);
             this.initializeHandlers();
         }
         else {
@@ -108,7 +111,7 @@ export class Session {
     }
 
     private initializeHandlers() {
-        if (!this._session_id) {
+        if (!this.session_id) {
             throw new SessionError("Session ID not defined"); // This should never happen
         }
         else if (!this._user || !this._user.user_id) {
