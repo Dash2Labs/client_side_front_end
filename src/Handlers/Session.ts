@@ -19,6 +19,7 @@ import { ChatObject } from './Chat.js';
 import { FeedbackObject } from './Feedback.js';
 import { HistoryObject } from './History.js';
 import { EventEmitter } from 'events';
+import SessionManager from '../Managers/Session.ts';
 
 export class Session {
     private _chat!: Chat;
@@ -148,15 +149,17 @@ class HandleSignIn extends EventEmitter {
                 this._session = new Session(this._session_id);
             }
         }
+        SessionManager.addSession(this._session as Session);
         this.emit("signedIn", this._session);
     }
 
     public signOut() {
         if (this._session) {
-            this._session[Symbol.dispose]();
+            SessionManager.removeSession(this._session.session_id);
             this._session = undefined;
             this._session_id = "";
             this.setSessionCookie(this._session_id);
+            
             this.emit("signedOut", this._session);
         }
     }

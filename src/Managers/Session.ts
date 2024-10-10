@@ -11,6 +11,7 @@ import { Session } from "../Handlers/Session.ts";
 class SessionManager {
     static instance: SessionManager;
     static sessions: Map<string, Session>;
+    static session_timeout: number = 10000;
     
     static getInstance(): SessionManager {
         if (!SessionManager.instance) {
@@ -24,16 +25,31 @@ class SessionManager {
         return SessionManager.sessions.get(sessionId);
     }
 
-    static DeleteExpiredSessions(): void {
+    static addSession(session: Session): void {
+        SessionManager.sessions.set(session.session_id, session);
+    }
+
+    static removeSession(sessionId: string): void {
+        var session = SessionManager.sessions.get(sessionId);
+        if (session) {
+            session[Symbol.dispose]();
+        }
+        SessionManager.sessions.delete(sessionId);
+    }
+
+    static deleteExpiredSessions(): void {
         SessionManager.sessions.forEach((session: Session) => {
             if (session.expiresAt.getTime() < Date.now()) {
+                if (session) {
+                    session[Symbol.dispose]();
+                }
                 SessionManager.sessions.delete(session.session_id);
             }
         });
     }
 
     static ManageSessions(): void {
-        setInterval(SessionManager.DeleteExpiredSessions, 10000);
+        setInterval(SessionManager.deleteExpiredSessions, SessionManager.session_timeout);
     }
 }
 
