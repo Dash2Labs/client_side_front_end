@@ -50,7 +50,6 @@ class Communicator {
      * @description This function gets the history from the server
      * @returns a promise that resolves to the response from the server, this is the history. History will need to be parsed by the ui apropriately
      * @throws an error if the request fails
-     * @needs to make sure to be sending session id and user id in the headers
      */
     public getHistory(): any {
         const url: string = "/api/history";
@@ -66,7 +65,6 @@ class Communicator {
      * @param chat 
      * @returns a promise that resolves to the response from the server, this is status code
      * @throws an error if the request fails
-     * @needs to make sure to be sending session id and user id in the headers and time. This function will be used to save history also
      */
 
     public sendChat(chat: ChatObject): any {
@@ -84,7 +82,6 @@ class Communicator {
      * @param custom_headers
      * @returns a promise that resolves to the response from the server
      * @throws an error if the request fails
-     * @needs to make sure to be sending session id and user id in the headers
      */
 
     private async _getRequest(url: string, custom_headers: AxiosHeaders | {}): Promise<AxiosResponse<any, any>>
@@ -124,7 +121,6 @@ class Communicator {
      * @param custom_headers
      * @returns a promise that resolves to the response from the server
      * @throws an error if the request fails
-     * @needs to make sure to be sending session id and user id in the headers
      */
 
     private async _postRequest(body: RequestBody,
