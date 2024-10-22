@@ -31,9 +31,36 @@ class Communicator {
         };
     }
 
+    // Communicator class implementation 
+    /**
+     * 
+     * @param feedback 
+     * @returns a promise that resolves to the response from the server, this is status code
+     * @throws an error if the request fails
+     */
+    public sendFeedback(feedback: FeedbackObject): any {
+        const url: string = "/api/feedback";
+        return this._postRequest(feedback, url, {}).then((response) => {
+            return response;
+        }).catch((error) => {
+            console.error("Error sending feedback: ", error);
+            throw error;
+        });
+    }
+    /**
+     * @description This function gets the history from the server
+     * @returns a promise that resolves to the response from the server, this is the history. History will need to be parsed by the ui apropriately
+     * @throws an error if the request fails
+     */
     public getHistory(): any {
 
     }
+    /**
+     * @description This function sends a chat message to the server
+     * @param chat 
+     * @returns a promise that resolves to the response from the server, this is status code
+     * @throws an error if the request fails
+     */
 
     public sendChat(chat: ChatObject): any {
         const url: string = "/api/chat";
@@ -44,6 +71,13 @@ class Communicator {
             throw error;
         });
     }
+    /**
+     * @description This function sends a request to the server
+     * @param url
+     * @param custom_headers
+     * @returns a promise that resolves to the response from the server
+     * @throws an error if the request fails
+     */
 
     public async getRequest(url: string, custom_headers: AxiosHeaders | {}): Promise<AxiosResponse<any, any>>
     {
@@ -76,6 +110,13 @@ class Communicator {
         console.error("getRequest: MaxRetries exceeded Error sending request");
         throw new Error("MaxRetries exceeded Error sending request");
     }
+    /**
+     * @description This function sends a request to the server
+     * @param url
+     * @param custom_headers
+     * @returns a promise that resolves to the response from the server
+     * @throws an error if the request fails
+     */
 
     public async postRequest(body: RequestBody,
                                url: string,

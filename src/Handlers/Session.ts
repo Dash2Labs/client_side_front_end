@@ -22,15 +22,20 @@ import { EventEmitter } from 'events';
 import SessionManager from '../Managers/Session.ts';
 
 export class Session {
-    private _chat!: Chat;
-    private _feedback!: Feedback;
-    private _history!: History;
-    private _user!: User;
-    private _communicator!: Communicator;
-    public createdAt!: Date;
+    private _chat!: Chat; // this is the chat handler is resposible for sending and receiving chat messages
+    private _feedback!: Feedback;  // this is the feedback handler is resposible for sending and receiving feedback
+    private _history!: History; // this is the history handler is resposible for getting the history
+    private _user!: User; // this is the user object that is used to authenticate the user
+    private _communicator!: Communicator; // this is the communicator object that is used to send and receive messages from the server
+    public createdAt!: Date; // this is the date the session was created
     public expiresAt: Date = new Date(this.createdAt.getTime() + 3600000); // 1 hour
-    public session_id!: string;
+    public session_id!: string; // this is the session id that is used to identify the session
 
+    /*
+    * @description This is the constructor for the Session class
+    * @param {string}
+    * calls the initialize function. Which handles the user authentication and session initialization
+    */
     constructor(session_id: string | undefined) {
         try {
             this.initialize(session_id);
@@ -85,7 +90,16 @@ export class Session {
 
     // TODO: Since we are setting configuration for the user we should be able to save their configuration
     
-
+    /**
+     * @description This is the initlize function that is called at the beginning of createing the session. 
+     * It handles the user authentication and session initialization
+     * @param {string} session_id
+     * @throws {AuthorizationError} if the user is not authorized
+     * @def uuidv4 is for generating a session id because it will generate at high level of condifence an unique id
+     * @calls initializeUser to initialize the user
+     * @calls initializeHandlers to initialize the handlers
+     * @calls Communicator to initialize the communicator 
+     */
     private initialize(session_id: string | undefined) {
         this.initializeUser();
         if (this._user) {
@@ -102,7 +116,13 @@ export class Session {
             throw new AuthorizationError("User not authorized");
         }
     }
-
+    
+    /** 
+    * @description This is a function that initializes the user object
+    * @calls User to initialize the user 
+    * @def constant useauth is used to determine if we are using authentication
+    * @find description of the user object in the User class
+    */
     private initializeUser() {
         if (!this._user && constants.useauth)
         {
@@ -110,7 +130,14 @@ export class Session {
         }
         this._user = new User(true); // anonymous user
     }
-
+     /** 
+    * @description This is a function that initializes the handlers
+    * @calls Chat to initialize the chat handler
+    * @calls Feedback to initialize the feedback handler
+    * @calls History to initialize the history handler
+    * @find description of the chat, feedback, and history objects in their respective classes
+    * @find description of the communicator object in the Communicator class
+    */
     private initializeHandlers() {
         if (!this.session_id) {
             throw new SessionError("Session ID not defined"); // This should never happen
@@ -133,6 +160,18 @@ export class Session {
         this._communicator[Symbol.dispose]();
     }
 }
+
+/**
+ * @description This is the HandleSignIn class which handles the user sign in and sign out
+ * @works with the Session class to handle the user session and the sessionMnager to manage the sessions
+ * @extends EventEmitter
+ * @def _session_id is the session id that is used to identify the session
+ * @def _session is the session object that is used to handle the user session
+ * @calls getSessionFromCookie to get the session id from the cookie
+ * @calls setSessionCookie to set the session id in the cookie
+ * @calls signIn to sign the user in
+ * @calls signOut to sign the user out
+ */
 
 class HandleSignIn extends EventEmitter {
     private _session_id!: string;
