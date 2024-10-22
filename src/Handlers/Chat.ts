@@ -9,6 +9,7 @@
 
 import Communicator from './Communicator.ts';
 import { Message } from '../Models/Message.js';
+import { ChatSessionError } from './Errors/SessionError.ts';
 
 export interface ChatObject {
     question: string;
@@ -21,10 +22,21 @@ class Chat {
         this._communicator = communicator;
     }
 
-    public sendQuestion(question: ChatObject): Message{
-        const response = this._communicator.sendChat(question); // TODO: Do we need to verify we have cleaned data here?
-        return response.data as Message;
-    }
+    public sendQuestion(question: ChatObject): Message {
+        const url: string = "/api/chat"; // TODO: Do we need to verify we have cleaned data here?
+        let response: any;
+        this._communicator.postRequest(question, url, {}).then((res) => {
+                response = res;
+            }).catch((error) => {
+                console.error("Error sending question: ", error);
+                throw new ChatSessionError("Error sending question: " + error.message);
+            });
+            if (response.status === 200) {
+                return response.data.message as Message;
+            }else {
+                throw new ChatSessionError("Error sending question: status " + response.status);
+            }
+        }
 
     [Symbol.dispose](): void {
     }

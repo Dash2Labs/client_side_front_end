@@ -10,8 +10,9 @@ import axios, { AxiosRequestConfig, AxiosHeaders, AxiosResponse, Axios } from "a
 import { FeedbackObject } from "./Feedback.ts";
 import { HistoryObject } from "./History.ts";
 import { ChatObject } from "./Chat.ts";
+import { SettingsObject } from "./Settings.ts";
 
-type RequestBody = FeedbackObject | HistoryObject | ChatObject;
+type RequestBody = FeedbackObject | HistoryObject | ChatObject | SettingsObject;
 class Communicator {
     private _maxRetries: number = 2;
     private _retryCount: number = 0;
@@ -31,46 +32,6 @@ class Communicator {
         };
     }
 
-    // Communicator class implementation 
-    /**
-     * 
-     * @param feedback 
-     * @returns a promise that resolves to the response from the server, this is status code
-     * @throws an error if the request fails
-     */
-    public sendFeedback(feedback: FeedbackObject): any {
-        const url: string = "/api/feedback";
-        return this._postRequest(feedback, url, {}).then((response) => {
-            return response;
-        }).catch((error) => {
-            console.error("Error sending feedback: ", error);
-            throw error;
-        });
-    }
-    /**
-     * @description This function gets the history from the server
-     * @returns a promise that resolves to the response from the server, this is the history. History will need to be parsed by the ui apropriately
-     * @throws an error if the request fails
-     */
-    public getHistory(): any {
-
-    }
-    /**
-     * @description This function sends a chat message to the server
-     * @param chat 
-     * @returns a promise that resolves to the response from the server, this is status code
-     * @throws an error if the request fails
-     */
-
-    public sendChat(chat: ChatObject): any {
-        const url: string = "/api/chat";
-        return this._postRequest(chat, url, {}).then((response) => {
-            return response;
-        }).catch((error) => {
-            console.error("Error sending chat: ", error);
-            throw error;
-        });
-    }
     /**
      * @description This function sends a request to the server
      * @param url

@@ -13,4 +13,22 @@ class SessionError extends Error {
     }
 };
 
+export class ChatSessionError extends SessionError {
+    constructor(message: string) {
+        super(message);
+    }
+};
+
+export class FeedbackSessionError extends SessionError {
+    constructor(message: string) {
+        super(message);
+    }
+};
+
+export class HistorySessionError extends SessionError {
+    constructor(message: string) {
+        super(message);
+    }
+};
+
 export default SessionError;

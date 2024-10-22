@@ -7,17 +7,15 @@
  * @author Dustin Morris
  */
 import { v4 as uuidv4 } from 'uuid';
-import Chat from './Chat.js';
-import Feedback from './Feedback.js';
-import History from './History.js';
+import Chat, { ChatObject } from './Chat.js';
+import Feedback, { FeedbackObject } from './Feedback.js';
+import History, { HistoryObject } from './History.js';
+import Settings, { SettingsObject } from './Settings.js';
 import User from '../Models/User.js';
 import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
 import SessionError from './Errors/SessionError.js';
 import Communicator from './Communicator.js';
-import { ChatObject } from './Chat.js';
-import { FeedbackObject } from './Feedback.js';
-import { HistoryObject } from './History.js';
 import { EventEmitter } from 'events';
 import SessionManager from '../Managers/Session.ts';
 
@@ -25,6 +23,7 @@ export class Session {
     private _chat!: Chat; // this is the chat handler is resposible for sending and receiving chat messages
     private _feedback!: Feedback;  // this is the feedback handler is resposible for sending and receiving feedback
     private _history!: History; // this is the history handler is resposible for getting the history
+    private _settings!: Settings; // this is the settings handler is resposible for getting and setting the settings
     private _user!: User; // this is the user object that is used to authenticate the user
     private _communicator!: Communicator; // this is the communicator object that is used to send and receive messages from the server
     public createdAt!: Date; // this is the date the session was created
@@ -80,12 +79,14 @@ export class Session {
      *@description This is a callback function for the ui to get configuration settings  
      */
      public getSettings() {
+        return this._settings.getSettings();
     }
 
     /**
      *@description This is a callback function for the ui to set configuration settings  
      */
-     public setSettings() {
+     public setSettings(settings: SettingsObject) {
+        this._settings.setSettings(settings);
     }
 
     // TODO: Since we are setting configuration for the user we should be able to save their configuration
@@ -149,6 +150,7 @@ export class Session {
             this._chat = new Chat(this._communicator);
             this._feedback = new Feedback(this._communicator);
             this._history = new History(this._communicator);
+            this._settings = new Settings(this._communicator);
         }
     }
 
@@ -163,7 +165,7 @@ export class Session {
 
 /**
  * @description This is the HandleSignIn class which handles the user sign in and sign out
- * @works with the Session class to handle the user session and the sessionMnager to manage the sessions
+ * @works with the Session class to handle the user session and the sessionManager to manage the sessions
  * @extends EventEmitter
  * @def _session_id is the session id that is used to identify the session
  * @def _session is the session object that is used to handle the user session
