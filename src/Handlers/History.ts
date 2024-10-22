@@ -22,7 +22,14 @@ class History {
     }
 
     public getHistory(): HistoryObject {
-        const response = this._communicator.getHistory();
+        const url: string = "/api/history";
+        let response: any;
+        this._communicator.getRequest(url, {}).then((res) => {
+            response = res;
+        }).catch((error) => {
+            console.error("Error getting history: ", error);
+            throw error;
+        });
         return {history: response.data} as HistoryObject;
     }
 

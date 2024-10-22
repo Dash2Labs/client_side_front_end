@@ -145,9 +145,7 @@ class HandleSignIn extends EventEmitter {
 
     public signIn() {
         if (!this._session) {
-            if (this._session_id) {
                 this._session = new Session(this._session_id);
-            }
         }
         SessionManager.addSession(this._session as Session);
         this.emit("signedIn", this._session);
@@ -156,10 +154,9 @@ class HandleSignIn extends EventEmitter {
     public signOut() {
         if (this._session) {
             SessionManager.removeSession(this._session.session_id);
-            this._session = undefined;
-            this._session_id = "";
             this.setSessionCookie(this._session_id);
-            
+            this._session = undefined;
+            this._session_id = "";  
             this.emit("signedOut", this._session);
         }
     }

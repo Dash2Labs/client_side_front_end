@@ -30,25 +30,9 @@ class Communicator {
             "dash2labs-session-id": session_id
         };
     }
-    // Communicator class implementation  
-    public sendFeedback(feedback: FeedbackObject): any {
-        const url: string = "/api/feedback";
-        return this._postRequest(feedback, url, {}).then((response) => {
-            return response;
-        }).catch((error) => {
-            console.error("Error sending feedback: ", error);
-            throw error;
-        });
-    }
 
     public getHistory(): any {
-        const url: string = "/api/history";
-        return this._getRequest(url, {}).then((response) => {
-            return response;
-        }).catch((error) => {
-            console.error("Error getting history: ", error);
-            throw error;
-        });
+
     }
 
     public sendChat(chat: ChatObject): any {
@@ -61,7 +45,7 @@ class Communicator {
         });
     }
 
-    private async _getRequest(url: string, custom_headers: AxiosHeaders | {}): Promise<AxiosResponse<any, any>>
+    public async getRequest(url: string, custom_headers: AxiosHeaders | {}): Promise<AxiosResponse<any, any>>
     {
         // Send request to the server
         this._appendHeaders(custom_headers);
@@ -73,7 +57,7 @@ class Communicator {
                 }
             }).catch((error) => {
                 if (this._retryCount >= this._maxRetries) {
-                    console.error("_getRequest: MaxRetries exceeded Error sending request: ", error);
+                    console.error("getRequest: MaxRetries exceeded Error sending request: ", error);
                     throw error;
                 }
                 if (error.response && error.response.status >= 500) {
@@ -89,11 +73,11 @@ class Communicator {
                 return response;
             }
         }
-        console.error("_getRequest: MaxRetries exceeded Error sending request");
+        console.error("getRequest: MaxRetries exceeded Error sending request");
         throw new Error("MaxRetries exceeded Error sending request");
     }
 
-    private async _postRequest(body: RequestBody,
+    public async postRequest(body: RequestBody,
                                url: string,
                                custom_headers: AxiosHeaders | {}): Promise<any> {
         // Send request to the server
@@ -109,7 +93,7 @@ class Communicator {
                 })
                 .catch((error) => {
                     if (this._retryCount >= this._maxRetries) {
-                        console.error("_postRequest: MaxRetries exceeded Error sending request: ", error)
+                        console.error("postRequest: MaxRetries exceeded Error sending request: ", error)
                         throw error;
                     }
                     if (error.response.status >= 500) {
@@ -125,7 +109,7 @@ class Communicator {
                 return response;
             }
         }
-        console.error("_postRequest: MaxRetries exceeded Error sending request");
+        console.error("postRequest: MaxRetries exceeded Error sending request");
         throw new Error("MaxRetries exceeded Error sending request");
     }
 

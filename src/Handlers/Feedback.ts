@@ -26,7 +26,14 @@ class Feedback {
     }
 
     public sendFeedback(feedback: FeedbackObject): boolean{
-        const response = this._communicator.sendFeedback(feedback); // TODO: Do we need to verify we have cleaned data here?
+        const url: string = "/api/feedback"; // TODO: Do we need to verify we have cleaned data here?
+        let response: any;
+        this._communicator.postRequest(feedback, url, {}).then((res) => {
+            response = res;
+        }).catch((error) => {
+            console.error("Error sending feedback: ", error);
+            throw error;
+        });
         return response.status === 200;
     }
 
