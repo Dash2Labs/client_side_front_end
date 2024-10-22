@@ -40,7 +40,7 @@ class Communicator {
      * @throws an error if the request fails
      */
 
-    public async getRequest(url: string, custom_headers: AxiosHeaders | {}): Promise<AxiosResponse<any, any>>
+    public async getRequest(url: string, custom_headers: typeof AxiosHeaders | {}): Promise<AxiosResponse<any, any>>
     {
         // Send request to the server
         this._appendHeaders(custom_headers);
@@ -81,7 +81,7 @@ class Communicator {
 
     public async postRequest(body: RequestBody,
                                url: string,
-                               custom_headers: AxiosHeaders | {}): Promise<any> {
+                               custom_headers: typeof AxiosHeaders | {}): Promise<any> {
         // Send request to the server
         this._appendHeaders(custom_headers);
         while (this._retryCount <= this._maxRetries) {
@@ -115,7 +115,7 @@ class Communicator {
         throw new Error("MaxRetries exceeded Error sending request");
     }
 
-    private _appendHeaders(custom_headers: AxiosHeaders | {}): void {
+    private _appendHeaders(custom_headers: typeof AxiosHeaders | {}): void {
         const headers = {
             ...this._defaultHeaders, ...custom_headers, 
         };

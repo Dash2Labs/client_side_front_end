@@ -8,6 +8,6 @@
  */
 
 import { PublicClientApplication } from "@azure/msal-browser";
-import { msalConfig } from "./Config.js";
+import { msalConfig } from "./Config.ts";
 
 export const msalInstance = new PublicClientApplication(msalConfig);

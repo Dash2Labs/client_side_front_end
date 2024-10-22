@@ -7,15 +7,15 @@
  * @author Dustin Morris
  */
 import { v4 as uuidv4 } from 'uuid';
-import Chat, { ChatObject } from './Chat.js';
-import Feedback, { FeedbackObject } from './Feedback.js';
-import History, { HistoryObject } from './History.js';
-import Settings, { SettingsObject } from './Settings.js';
-import User from '../Models/User.js';
+import Chat, { ChatObject } from './Chat.ts';
+import Feedback, { FeedbackObject } from './Feedback.ts';
+import History, { HistoryObject } from './History.ts';
+import Settings, { SettingsObject } from './Settings.ts';
+import User from '../Models/User.ts';
 import { constants } from '../constants.js';
-import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
-import SessionError from './Errors/SessionError.js';
-import Communicator from './Communicator.js';
+import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
+import SessionError from './Errors/SessionError.ts';
+import Communicator from './Communicator.ts';
 import { EventEmitter } from 'events';
 import SessionManager from '../Managers/Session.ts';
 
@@ -27,7 +27,7 @@ export class Session {
     private _user!: User; // this is the user object that is used to authenticate the user
     private _communicator!: Communicator; // this is the communicator object that is used to send and receive messages from the server
     public createdAt!: Date; // this is the date the session was created
-    public expiresAt: Date = new Date(this.createdAt.getTime() + 3600000); // 1 hour
+    public expiresAt!: Date; // this is the date the session will expire
     public session_id!: string; // this is the session id that is used to identify the session
 
     /*
@@ -37,14 +37,18 @@ export class Session {
     */
     constructor(session_id: string | undefined) {
         try {
-            this.initialize(session_id);
+            this._initialize(session_id);
             this.createdAt = new Date();
+            this.expiresAt = new Date(this.createdAt.getTime() + 3600000); // 1 hour
         }
         catch (error) {
             if (constants.debug) {
                 console.error(error);
             }
             else {
+                if (error instanceof AuthorizationError) {
+                    throw error;
+                }
                 if (error instanceof Error) {
                     throw new SessionError("Session initialization failed: " + error.message + " " + error.stack);
                 } else {
@@ -101,8 +105,8 @@ export class Session {
      * @calls initializeHandlers to initialize the handlers
      * @calls Communicator to initialize the communicator 
      */
-    private initialize(session_id: string | undefined) {
-        this.initializeUser();
+    private _initialize(session_id: string | undefined) {
+        this._initializeUser();
         if (this._user) {
             if(session_id) {
                 this.session_id = session_id;  //TODO: validate session id
@@ -111,7 +115,7 @@ export class Session {
                 this.session_id = uuidv4();  // ui didn't give us a session id so we create a new one
             }
             this._communicator = new Communicator(this.session_id, this._user.user_id as string);
-            this.initializeHandlers();
+            this._initializeHandlers();
         }
         else {
             throw new AuthorizationError("User not authorized");
@@ -124,7 +128,7 @@ export class Session {
     * @def constant useauth is used to determine if we are using authentication
     * @find description of the user object in the User class
     */
-    private initializeUser() {
+    private _initializeUser() {
         if (!this._user && constants.useauth)
         {
             this._user = new User(false); // populate user from auth
@@ -139,12 +143,12 @@ export class Session {
     * @find description of the chat, feedback, and history objects in their respective classes
     * @find description of the communicator object in the Communicator class
     */
-    private initializeHandlers() {
+    private _initializeHandlers() {
         if (!this.session_id) {
             throw new SessionError("Session ID not defined"); // This should never happen
         }
         else if (!this._user || !this._user.user_id) {
-            throw new SessionError("User not defined"); // This should never happen
+            throw new AuthorizationError("User not defined"); // This should never happen
         }
         else {
             this._chat = new Chat(this._communicator);
@@ -155,11 +159,11 @@ export class Session {
     }
 
     [Symbol.dispose]() {
-        this._chat[Symbol.dispose]();
-        this._feedback[Symbol.dispose]();
-        this._history[Symbol.dispose]();
-        this._user[Symbol.dispose]();
-        this._communicator[Symbol.dispose]();
+        if (this._chat) this._chat[Symbol.dispose]();
+        if (this._feedback) this._feedback[Symbol.dispose]();
+        if (this._history) this._history[Symbol.dispose]();
+        if (this._user) this._user[Symbol.dispose]();
+        if (this._communicator) this._communicator[Symbol.dispose]();
     }
 }
 
@@ -210,4 +214,4 @@ class HandleSignIn extends EventEmitter {
     }
 }
 
-export default HandleSignIn;
+export default HandleSignIn

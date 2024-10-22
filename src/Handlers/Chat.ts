@@ -8,7 +8,7 @@
  */
 
 import Communicator from './Communicator.ts';
-import { Message } from '../Models/Message.js';
+import { Message } from '../Models/Message.ts';
 import { ChatSessionError } from './Errors/SessionError.ts';
 
 export interface ChatObject {

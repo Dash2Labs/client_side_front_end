@@ -1,33 +1,42 @@
-import { Session } from './Session.js';
-import Chat, { ChatObject } from './Chat.js';
-import Feedback, { FeedbackObject } from './Feedback.js';
-import History, { HistoryObject } from './History.js';
-import Settings, { SettingsObject } from './Settings.js';
-import User from '../Models/User.js';
-import Communicator from './Communicator.js';
+import { v4 as uuiv4 } from 'uuid';
+import { Session } from '../Handlers/Session.ts';
+import Chat, { ChatObject } from '../Handlers/Chat.ts';
+import Feedback, { FeedbackObject } from '../Handlers/Feedback.ts';
+import History, { HistoryObject } from '../Handlers/History.ts';
+import Settings, { SettingsObject } from '../Handlers/Settings.ts';
+import User from '../Models/User.ts';
+import Communicator from '../Handlers/Communicator.ts';
 import { constants } from '../constants.js';
-import AuthorizationError from '../Authorization/Errors/AuthorizationError.js';
-import SessionError from './Errors/SessionError.js';
+import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
+import SessionError from '../Handlers/Errors/SessionError.ts';
 
-jest.mock('./Chat.js');
-jest.mock('./Feedback.js');
-jest.mock('./History.js');
-jest.mock('./Settings.js');
-jest.mock('../Models/User.js');
-jest.mock('./Communicator.js');
+jest.mock('../Handlers/Chat.ts');
+jest.mock('../Handlers/Feedback.ts');
+jest.mock('../Handlers/History.ts');
+jest.mock('../Handlers/Settings.ts');
+jest.mock('../Models/User.ts');
+jest.mock('../Handlers/Communicator.ts');
 jest.mock('../constants.js');
 
 describe('Session', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        (constants as any).useauth = true;
+        (constants as any).useauth = false;
         (constants as any).debug = false;
+
+        (User as jest.Mock).mockImplementation(() => {
+            return {
+                user_id: uuiv4(),
+                photo: "photo",
+                [Symbol.dispose]: jest.fn()
+            };
+        });
     });
 
     it('should initialize a session with a given session_id', () => {
-        const session_id = 'test-session-id';
+        const session_id = uuiv4();
         const session = new Session(session_id);
-
+        
         expect(session.session_id).toBe(session_id);
         expect(Communicator).toHaveBeenCalledWith(session_id, expect.any(String));
         expect(Chat).toHaveBeenCalledWith(expect.any(Communicator));
@@ -48,8 +57,10 @@ describe('Session', () => {
     });
 
     it('should throw an AuthorizationError if user is not authorized', () => {
-        (constants as any).useauth = false;
-        (User as jest.Mock).mockImplementation(() => null);
+        (constants as any).useauth = true;
+        (User as jest.Mock).mockImplementation(() => {
+            throw new AuthorizationError("User not authorized");
+        });
 
         expect(() => new Session(undefined)).toThrow(AuthorizationError);
     });
