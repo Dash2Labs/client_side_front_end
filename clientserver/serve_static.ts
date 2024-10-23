@@ -2,10 +2,10 @@ import expressStaticGzip, { ExpressStaticGzipOptions } from 'express-static-gzip
 import { Request, Response, NextFunction } from 'express';
 
 interface ExtendedOptions extends ExpressStaticGzipOptions {
-    setHeaders?: (res: Response, path: string, stat: any) => void;
+    setHeaders?: (res: Response, path: string, stat: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export const serveStatic = (PUBLIC_DIR: string, ...other: string[]) => (req: Request, res: Response, next: NextFunction) => {
+const serveStatic = (other: string[]) => (req: Request, res: Response, next: NextFunction) => {
     const options: ExtendedOptions = {
         enableBrotli: true,
         orderPreference: ['br', 'gz'],
@@ -14,5 +14,9 @@ export const serveStatic = (PUBLIC_DIR: string, ...other: string[]) => (req: Req
         },
     };
 
-    expressStaticGzip(PUBLIC_DIR, options)(req, res, next);
+    other.forEach((dir) => {
+        expressStaticGzip(dir, options)(req, res, next);
+    });
 };
+
+export default serveStatic;

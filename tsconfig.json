@@ -23,15 +23,14 @@
   "exclude": [
     "node_modules",
     "**/node_modules",
-    "Server/.server/*",
     "**/node_modules/@mui/base/Unstable_Popup/Popup.d.ts",
     "**/*.bundle.js",
-    "**/Client/constants.*",
-    "**/Client/constant.*",
-    "/usr/src/Client/constant.js"
+    "**/client/constants.*",
+    "**/client/constant.*",
+    "/later/*"
   ],
   "include": [
-    "ClientServer",
-    "Client"
+    "clientserver",
+    "client"
   ]
 }
