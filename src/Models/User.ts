@@ -27,7 +27,7 @@ class User {
             }
             this._photo = await getProfile(null);
         } else {
-            this._user_id = uuidv4();
+            this._user_id = ["A-", uuidv4()].join("");
         }
     }
     

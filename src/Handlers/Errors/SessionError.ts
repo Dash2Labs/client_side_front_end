@@ -31,4 +31,10 @@ export class HistorySessionError extends SessionError {
     }
 };
 
+export class SettingsSessionError extends SessionError {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
 export default SessionError;

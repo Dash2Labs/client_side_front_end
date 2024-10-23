@@ -5,8 +5,17 @@ interface ChatObject {
     question: string;
 }
 
+interface FeedbackObject {
+    feedback: string;
+    feedbackId: string;
+    question: string;
+    response: string;
+    responseTime: number;
+}
+
 const ax = axios.default;
 const api = express.Router();
+const dash2labs_user_id = "dash2labs-user-id";
 
 api.post('/api/chat', (req, res) => {
     if (!req.body.question) {
@@ -16,7 +25,8 @@ api.post('/api/chat', (req, res) => {
     const question: ChatObject = req.body;
     const headers = defaultHeaders;
     const correlationId = uuiv4();
-    const options = { headers: { ...headers, "correlation-id": correlationId } };
+    const userId = req.headers[dash2labs_user_id];
+    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId } };
 
     ax.post(`${constants.server}/api/chat`, question, options).then((response) => {
         handleResponse(res, response, correlationId);
@@ -30,10 +40,12 @@ api.post('/api/feedback', (req, res) => {
         res.status(400).send('No feedback provided');
     };
 
-    const feedback = req.body;
+    const feedback: FeedbackObject = req.body;
+
     const headers = defaultHeaders;
     const correlationId = uuiv4();
-    const options = { headers: { ...headers, "correlation-id": correlationId } };
+    const userId = req.headers[dash2labs_user_id];
+    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId } };
 
     ax.post(`${constants.server}/api/feedback`, feedback, options).then((response) => {
         handleResponse(res, response, correlationId);
@@ -45,19 +57,29 @@ api.post('/api/feedback', (req, res) => {
 api.get('/api/history', (req, res) => {
     const headers = defaultHeaders;
     const correlationId = uuiv4();
-    const options = { headers: { ...headers, "correlation-id": correlationId } };
+    const userId = req.headers[dash2labs_user_id];
+    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId } };
 
-    ax.get(`${constants.server}/api/history`, options).then((response) => {
-        handleResponse(res, response, correlationId);
-    }).catch(() => {
-        res.status(500).send(er.serverError);
-    });
+    if (!constants.useAuth) {
+        ax.get(`${constants.server}/api/history/random`, options).then((response) => {
+            handleResponse(res, response, correlationId);
+        }).catch(() => {
+            res.status(500).send(er.serverError);
+        });
+    } else {
+        ax.get(`${constants.server}/api/history`, options).then((response) => {
+            handleResponse(res, response, correlationId);
+        }).catch(() => {
+            res.status(500).send(er.serverError);
+        });
+    }
 });
 
 api.get('/api/settings', (req, res) => {
     const headers = defaultHeaders;
     const correlationId = uuiv4();
-    const options = { headers: { ...headers, "correlation-id": correlationId } };
+    const userId = req.headers[dash2labs_user_id];
+    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId } };
 
     ax.get(`${constants.server}/api/settings`, options).then((response) => {
         handleResponse(res, response, correlationId);
@@ -74,7 +96,8 @@ api.post('/api/settings', (req, res) => {
     const settings = req.body;
     const headers = defaultHeaders;
     const correlationId = uuiv4();
-    const options = { headers: { ...headers, "correlation-id": correlationId } };
+    const userId = req.headers[dash2labs_user_id];
+    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId } };
 
     if (constants.useAuth) {
         ax.post(`${constants.server}/api/settings`, settings, options).then((response) => {
@@ -90,7 +113,8 @@ api.post('/api/settings', (req, res) => {
 api.get('/api/settings', (req, res) => {
     const headers = defaultHeaders;
     const correlationId = uuiv4();
-    const options = { headers: { ...headers, "correlation-id": correlationId } };
+    const userId = req.headers[dash2labs_user_id];
+    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId } };
     const client_settings = constants.client_settings;
 
     if (constants.useAuth) {
@@ -98,7 +122,7 @@ api.get('/api/settings', (req, res) => {
             response.data = { user_settings: response.data, ...client_settings };
             handleResponse(res, response, correlationId);
         }).catch(() => {
-            res.status(503).send({user_settings: er.serverError, ...client_settings});
+            res.status(206).send({user_settings: er.serverError, ...client_settings});
         });
     } else {
         res.status(200).send({...client_settings});

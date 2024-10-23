@@ -40,13 +40,19 @@ class Communicator {
      * @throws an error if the request fails
      */
 
-    public async getRequest(url: string, custom_headers: typeof AxiosHeaders | object): Promise<AxiosResponse<any, any>> // eslint-disable-line
+    public async getRequest(url: string,
+                            custom_headers: typeof AxiosHeaders | object): 
+                            Promise<AxiosResponse<any, any>> // eslint-disable-line
     {
         // Send request to the server
         this._appendHeaders(custom_headers);
         while (this._retryCount <= this._maxRetries) {
                 const response = await axios.get(url, this._config).then((response) => {
                 if (response.status >= 200 && response.status < 300) {
+                    if (response.status === 206) {
+                        // Partial Success
+                        console.error("getRequest: Partial Content Error sending request: ", response);
+                    }
                     // Success
                     return response;
                 }
