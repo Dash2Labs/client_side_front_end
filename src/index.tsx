@@ -3,6 +3,7 @@ import App from './app.tsx';
 import { constants } from './constants.js';
 import { EventType, AccountInfo } from '@azure/msal-browser';
 import { msalInstance } from './Authorization/MsalInstance.ts';
+import React from 'react'; // eslint-disable-line
 
 if (constants.useauth === true) {
   msalInstance.initialize().then(() => {
