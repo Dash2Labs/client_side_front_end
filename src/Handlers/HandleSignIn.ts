@@ -26,7 +26,7 @@ class HandleSignIn extends EventEmitter {
     public signIn() {
         if (!this._session) {
                 this._session = new Session(this._session_id);
-                if (this._session && this._session.session_id) {
+                if (this._session) {
                     this._session_id = this._session.session_id;
                     SessionManager.addSession(this._session);
                 }

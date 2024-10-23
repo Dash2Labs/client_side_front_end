@@ -30,6 +30,8 @@ describe('HandleSignIn', () => {
     });
 
     it('should sign in and create a new session if not already signed in', () => {
+        jest.clearAllMocks();
+        jest.unmock('../Handlers/Session.ts');
         const spy = jest.spyOn(SessionManager, 'addSession');
         handleSignIn.signIn();
         
