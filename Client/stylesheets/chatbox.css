@@ -1,0 +1,286 @@
+
+
+#chat-container.chat-layout {
+    display: flex;
+    height: 100%;
+}
+
+#chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #2e2d2d;  /* Slightly lighter background for the main content area */
+}
+
+#chat-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 90%;
+    height: 100%;
+    margin-right: 5%;
+    margin-left: 5%;
+    font-size: 16px;
+}
+
+#chat {
+    border-style: solid;
+    border-color: #ccc;  /* Lighter border color */
+    width: 90%;
+    max-width: 90%;
+    height: 63vh;  /* Reduce height to make the chat box smaller */
+    padding: 4%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px #888;  /* Softer shadow to match the screenshot */
+    overflow-y: auto;
+    background: #bbbbbb;
+}
+
+.input-box {
+    align-items: center;
+    justify-content: flex-start; /* Align items to the start of the container */
+    width: 1000px;  /* Set a fixed width for the input box */
+    margin: 10px auto;  /* Center the input box horizontally */
+    flex-wrap: nowrap; /* Prevent wrapping */
+}
+
+#chat-container {
+    width: 100%;
+    height: 100%;
+}
+
+
+#chat-input {
+    background: #bbbbbb;
+    width: 100%;  /* Increase width to make the input area larger */
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #a4a4a4;
+    margin: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.input-area button {
+    width: 10%;  /* Adjust width to fit next to the input */
+    padding: 10px 20px;
+    border-radius: 10px;  /* Match the input's border-radius */
+    border: none;
+    background-color: #4b4b4b;
+    color: rgb(165, 165, 165);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+
+#greeting {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    align-items: center;
+}
+
+#greeting img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 10px;
+}
+
+.profile-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 10px;
+}
+
+
+.suggestionsSubtitle {
+    font-size: 20px;
+    font-weight: normal;
+    margin: 10px;
+    color: gray;
+}
+
+.chatInputContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;  /* Align items vertically in the center */
+    width: 100%;  /* Adjust width to take up full available space */
+    margin-top: 20px;  /* Adjust margin to separate from top */
+}
+
+.chat-output-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;  /* Align items vertically in the center */
+    width: 100%;  /* Adjust width to take up full available space */
+    margin-bottom: 20px;  /* Add some spacing between messages */
+}
+
+.bot-answer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    max-width: 80%;  /* Ensure the text does not take up too much space */
+}
+
+.chat-output-container img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;  /* Space between image and text */
+}
+
+.chat-output-container p {
+    margin: 0;  /* Remove default margin from paragraphs */
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+p {
+    margin: 0;
+}
+
+.welcome {
+    font-size: 1em;
+    color: #fff;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.welcome-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.expand-icon {
+    width: 15px;
+    height: 15px;
+    top: -5px;
+}
+
+.message-and-feedback-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px; 
+  }
+  
+  .feedback-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center; 
+    padding: 10px; 
+}
+
+.feedback-box h3 {
+    font-size: 12px;
+    margin: 10px 0; 
+    font-weight: normal; 
+}
+
+
+.feedback-option {
+    font-size: 24px;
+    padding: 5px; 
+    margin: 2px; 
+    width: 50px; 
+    height: 50px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none; 
+    background-color: transparent; 
+    cursor: pointer; 
+}
+
+.feedback-option:hover {
+    background-color: #f0f0f0; 
+}
+
+.feedback-option.selected {
+    border-radius: 50%; 
+    background-color: #f0f0f0; 
+    border: 2px solid #007bff; 
+}
+
+.feedback-box textarea {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    font-size: 14px;
+}
+body {
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.app {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: #393939;
+    color: white;
+    padding: 10px;
+    display: flex;
+    height: 80px;
+    align-items: center;
+    border-bottom: 2px solid #282828;
+}
+
+.logo {
+    margin-left: auto; /* Pushes the logo to the far right */
+    padding: 0; /* Ensures zero padding on the logo */
+}
+
+.header img {
+    height: 95px; /* Adjust the height as needed */
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #393939;
+    color: white;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #282828; /* Add a right border to the sidebar */
+
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar .menu li {
+    padding: 10px 0;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.sidebar .menu li:last-child {
+    margin-bottom: 0;
+}
+
+.sidebar .settings {
+    margin-top: auto;
+    padding: 10px 0;
+}

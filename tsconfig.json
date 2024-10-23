@@ -1,10 +1,37 @@
 {
-  "references": [
-    {
-      "path": "./clientserver/tsconfig.server.json"
-    },
-    {
-      "path": "./src/tsconfig.client.json"
-    }
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": "./ClientServer",
+    "inlineSources": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "allowJs": false,
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "declarationMap": false,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+  },
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "Server/.server/*",
+    "**/node_modules/@mui/base/Unstable_Popup/Popup.d.ts",
+    "**/*.bundle.js",
+    "**/Client/constants.*",
+    "**/Client/constant.*",
+    "/usr/src/Client/constant.js"
+  ],
+  "include": [
+    "ClientServer",
+    "Client"
   ]
 }
