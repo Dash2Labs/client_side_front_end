@@ -4,4 +4,5 @@ export namespace constants {
     const server: string;
     const useAuth: boolean;
     const client_settings: any;
+    const maxLength: number;
 }

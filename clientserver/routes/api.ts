@@ -1,5 +1,7 @@
 import { express, axios, constants, defaultHeaders, uuiv4, handleResponse } from '../common_imports.js';
 import er from '../errors.js';
+import { getSizeInBytes } from '../Utilities/Utility.js';
+import xss from 'xss';
 
 interface ChatObject {
     question: string;
@@ -18,6 +20,14 @@ const api = express.Router();
 const dash2labs_user_id = "dash2labs-user-id";
 
 api.post('/api/chat', (req, res) => {
+    if (getSizeInBytes(req) > constants.maxLength) {
+        res.status(400).send('Question too long');
+        return;
+    };
+    if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
+        res.status(400).send('Invalid characters in question');
+        return;
+    };
     if (!req.body.question) {
         res.status(400).send('No question provided');
     };
@@ -36,10 +46,18 @@ api.post('/api/chat', (req, res) => {
 });
 
 api.post('/api/feedback', (req, res) => {
+    if (getSizeInBytes(req) > constants.maxLength) {
+        res.status(400).send('Feedback too long');
+        return;
+    };
+    if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
+        res.status(400).send('Invalid characters in feedback');
+        return;
+    };
     if (!req.body.feedback) {
         res.status(400).send('No feedback provided');
+        return;
     };
-
     const feedback: FeedbackObject = req.body;
 
     const headers = defaultHeaders;
@@ -55,6 +73,10 @@ api.post('/api/feedback', (req, res) => {
 });
 
 api.get('/api/history', (req, res) => {
+    if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
+        res.status(400).send('Invalid characters in history request');
+        return;
+    };
     const headers = defaultHeaders;
     const correlationId = uuiv4();
     const userId = req.headers[dash2labs_user_id];
@@ -76,6 +98,10 @@ api.get('/api/history', (req, res) => {
 });
 
 api.get('/api/settings', (req, res) => {
+    if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
+        res.status(400).send('Invalid characters in settings request');
+        return;
+    };
     const headers = defaultHeaders;
     const correlationId = uuiv4();
     const userId = req.headers[dash2labs_user_id];
@@ -89,6 +115,14 @@ api.get('/api/settings', (req, res) => {
 });
 
 api.post('/api/settings', (req, res) => {
+    if (getSizeInBytes(req) > constants.maxLength) {
+        res.status(400).send('Settings too long');
+        return;
+    };
+    if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
+        res.status(400).send('Invalid characters in settings post request');
+        return;
+    };
     if (!req.body.settings) {
         res.status(400).send('No settings provided');
     };
@@ -109,25 +143,5 @@ api.post('/api/settings', (req, res) => {
         res.status(403).send(er.userError);
     };
 });
-
-api.get('/api/settings', (req, res) => {
-    const headers = defaultHeaders;
-    const correlationId = uuiv4();
-    const userId = req.headers[dash2labs_user_id];
-    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId } };
-    const client_settings = constants.client_settings;
-
-    if (constants.useAuth) {
-        ax.get(`${constants.server}/api/settings`, options).then((response) => {
-            response.data = { user_settings: response.data, ...client_settings };
-            handleResponse(res, response, correlationId);
-        }).catch(() => {
-            res.status(206).send({user_settings: er.serverError, ...client_settings});
-        });
-    } else {
-        res.status(200).send({...client_settings});
-    };
-});
-
 
 export default api;

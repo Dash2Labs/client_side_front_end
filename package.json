@@ -33,7 +33,8 @@
     "morgan": "^1.10.0",
     "react": "latest",
     "react-dom": "latest",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "@babel/core": "^7.25.9",

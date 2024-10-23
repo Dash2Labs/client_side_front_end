@@ -188,7 +188,7 @@ public/*.css
 
 !stylesheets/*.css
 !**/stylesheets/*.css
-!Client/constants.js
+!**/constants.js
 Server/.server
 *.rdb
 !ClientServer/constants.js
