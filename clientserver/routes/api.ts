@@ -24,7 +24,7 @@ api.post('/api/chat', (req, res) => {
         res.status(400).send('Question too long');
         return;
     };
-    if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
+    if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) { //TODO: Check if this works.  I am unsure if stringigy the entire request will work.
         res.status(400).send('Invalid characters in question');
         return;
     };
