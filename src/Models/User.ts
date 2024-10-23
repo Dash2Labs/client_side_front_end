@@ -48,6 +48,7 @@ class User {
     }
 };
 
+// eslint-disable-next-line
 class NewUser {
     private _username: string = "";
     private _email: string = "";

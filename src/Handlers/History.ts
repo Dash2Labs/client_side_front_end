@@ -23,7 +23,7 @@ class History {
 
     public getHistory(): HistoryObject {
         const url: string = "/api/history";
-        let response: any;
+        let response: any; // eslint-disable-line
         this._communicator.getRequest(url, {}).then((res) => {
             response = res;
         }).catch((error) => {

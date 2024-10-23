@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { v4 as uuiv4 } from 'uuid';
 import Session from '../Handlers/Session.ts';
 import Chat, { ChatObject } from '../Handlers/Chat.ts';

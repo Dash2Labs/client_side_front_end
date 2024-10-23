@@ -30,7 +30,7 @@ class SessionManager {
     }
 
     static removeSession(sessionId: string): void {
-        var session = SessionManager.sessions.get(sessionId);
+        const session = SessionManager.sessions.get(sessionId);
         if (session) {
             session[Symbol.dispose]();
         }

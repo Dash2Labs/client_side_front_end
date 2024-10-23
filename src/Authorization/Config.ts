@@ -22,6 +22,7 @@ const isIE: boolean = msie > 0 || msie11 > 0;
 const isEdge: boolean = msedge > 0;
 const isFirefox: boolean = firefox > 0; // Only needed if you need to support the redirect flow in Firefox incognito
 
+
 // Config object to be passed to Msal on creation
 export const msalConfig: Configuration = {
     auth: {
@@ -37,8 +38,10 @@ export const msalConfig: Configuration = {
     system: {
         iframeHashTimeout: 100000,
         allowNativeBroker: false, // Disables WAM Broker
-        loggerOptions: {
-            loggerCallback: (level: any, message: any, containsPii: any) => {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+            loggerOptions: {
+                loggerCallback: (level: any, message: any, containsPii: any) => { 
+        /* eslint-enable @typescript-eslint/no-explicit-any */
                 if (containsPii) {
                     return;
                 }

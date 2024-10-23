@@ -24,7 +24,7 @@ class Chat {
 
     public sendQuestion(question: ChatObject): Message {
         const url: string = "/api/chat"; // TODO: Do we need to verify we have cleaned data here?
-        let response: any;
+        let response: any;  // eslint-disable-line
         this._communicator.postRequest(question, url, {}).then((res) => {
                 response = res;
             }).catch((error) => {

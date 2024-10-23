@@ -1,5 +1,4 @@
 import { createRoot } from 'react-dom/client';
-import React from 'react';
 import App from './app.tsx';
 import { constants } from './constants.js';
 import { EventType, AccountInfo } from '@azure/msal-browser';

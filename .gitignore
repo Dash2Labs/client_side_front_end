@@ -18,6 +18,8 @@ server/
 *.js
 *.js.map
 *.d.ts
+!constants.d.ts
+!constants.js
 
 # IDE/Editor specific
 .vscode/
@@ -35,3 +37,6 @@ Thumbs.db
 
 # Secrets
 .env.keys
+
+# Eslint
+!.eslint.config.js

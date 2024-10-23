@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Session from '../Handlers/Session.ts';
 import SessionManager from '../Managers/Session.ts';
 import HandleSignIn from '../Handlers/HandleSignIn.ts';
@@ -50,7 +51,7 @@ describe('HandleSignIn', () => {
         handleSignIn.signOut();
 
         expect(spyR).toHaveBeenCalledWith(defaultSessionId);
-        let sessionId = (handleSignIn as any)._session_id;
+        const sessionId = (handleSignIn as any)._session_id;
         expect(handleSignIn.session).toBeUndefined();
         expect(sessionId).toBe('');
         expect(handleSignIn.emit).toHaveBeenCalledWith('signedOut', undefined);

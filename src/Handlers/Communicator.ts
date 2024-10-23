@@ -6,7 +6,7 @@
  * 
  * @author Dustin Morris
  */
-import axios, { AxiosRequestConfig, AxiosHeaders, AxiosResponse, Axios } from "axios";
+import axios, { AxiosRequestConfig, AxiosHeaders, AxiosResponse } from "axios";
 import { FeedbackObject } from "./Feedback.ts";
 import { HistoryObject } from "./History.ts";
 import { ChatObject } from "./Chat.ts";
@@ -16,7 +16,7 @@ type RequestBody = FeedbackObject | HistoryObject | ChatObject | SettingsObject;
 class Communicator {
     private _maxRetries: number = 2;
     private _retryCount: number = 0;
-    private _defaultHeaders: any;
+    private _defaultHeaders: { [key: string]: string };
     private _config!: AxiosRequestConfig;
 
     constructor(session_id: string, user_id: string) {
@@ -40,7 +40,7 @@ class Communicator {
      * @throws an error if the request fails
      */
 
-    public async getRequest(url: string, custom_headers: typeof AxiosHeaders | {}): Promise<AxiosResponse<any, any>>
+    public async getRequest(url: string, custom_headers: typeof AxiosHeaders | object): Promise<AxiosResponse<any, any>> // eslint-disable-line
     {
         // Send request to the server
         this._appendHeaders(custom_headers);
@@ -81,7 +81,7 @@ class Communicator {
 
     public async postRequest(body: RequestBody,
                                url: string,
-                               custom_headers: typeof AxiosHeaders | {}): Promise<any> {
+                               custom_headers: typeof AxiosHeaders | object): Promise<any> {  // eslint-disable-line
         // Send request to the server
         this._appendHeaders(custom_headers);
         while (this._retryCount <= this._maxRetries) {
@@ -115,7 +115,7 @@ class Communicator {
         throw new Error("MaxRetries exceeded Error sending request");
     }
 
-    private _appendHeaders(custom_headers: typeof AxiosHeaders | {}): void {
+    private _appendHeaders(custom_headers: typeof AxiosHeaders | object): void {
         const headers = {
             ...this._defaultHeaders, ...custom_headers, 
         };

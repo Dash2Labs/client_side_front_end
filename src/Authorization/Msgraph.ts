@@ -35,6 +35,7 @@ export async function callMsGraph(accessToken: string | null, getPhoto: boolean 
     };
 
     if (getPhoto) {
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         return fetch(`${graphConfig.graphProfilePhotoEndpoint}`, options)
             .then(response => {
                 if (!response.ok) {
@@ -45,7 +46,8 @@ export async function callMsGraph(accessToken: string | null, getPhoto: boolean 
             .then(blob => {
                 return URL.createObjectURL(blob);
             })
-            .catch(error => null);
+            .catch(error => null);   
+            /* eslint-enable @typescript-eslint/no-unused-vars */
     }
 
     return fetch(graphConfig.graphMeEndpoint, options)

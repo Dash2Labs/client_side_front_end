@@ -27,7 +27,7 @@ class Feedback {
 
     public sendFeedback(feedback: FeedbackObject): boolean{
         const url: string = "/api/feedback"; // TODO: Do we need to verify we have cleaned data here?
-        let response: any;
+        let response: any; // eslint-disable-line
         this._communicator.postRequest(feedback, url, {}).then((res) => {
             response = res;
         }).catch((error) => {

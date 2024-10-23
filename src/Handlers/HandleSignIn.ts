@@ -49,7 +49,8 @@ class HandleSignIn extends EventEmitter {
         return defaultSessionId; //TODO: get session id from cookie
     }
 
-    private setSessionCookie(session_id: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private setSessionCookie(session_id: string) {  //TODO: set session id in cookie
     }
 
     public get session_id(): string {

@@ -9,10 +9,12 @@
 
 import Communicator from "./Communicator.ts";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SettingsObject {
     client_settings?: any; // Settings common to all clients for a particular customer
     user_settings?: any;  // Settings specific to a user
 };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 class Settings {
     private _communicator!: Communicator;
@@ -23,7 +25,7 @@ class Settings {
 
     public getSettings(): SettingsObject {
         const url: string = "/api/settings";
-        let response: any;
+        let response: any; // eslint-disable-line
         this._communicator.getRequest(url, {}).then((res) => {
             response = res;
         }).catch((error) => {
@@ -35,7 +37,7 @@ class Settings {
 
     public setSettings(settings: SettingsObject): void {
         const url: string = "/api/settings";
-        let response: any;
+        let response: any; // eslint-disable-line
         this._communicator.postRequest(settings, url, {}).then((res) => {
             response = res;
         }).catch((error) => {
