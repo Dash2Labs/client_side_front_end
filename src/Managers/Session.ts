@@ -7,7 +7,7 @@
  * @author Dustin Morris
  */
 
-import { Session } from "../Handlers/Session.ts";
+import Session from "../Handlers/Session.ts";
 class SessionManager {
     static instance: SessionManager;
     static sessions: Map<string, Session>;
@@ -51,6 +51,6 @@ class SessionManager {
     static ManageSessions(): void {
         setInterval(SessionManager.deleteExpiredSessions, SessionManager.session_timeout);
     }
-}
+};
 
 export default SessionManager;

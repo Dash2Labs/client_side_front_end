@@ -1,5 +1,5 @@
 import { v4 as uuiv4 } from 'uuid';
-import { Session } from '../Handlers/Session.ts';
+import Session from '../Handlers/Session.ts';
 import Chat, { ChatObject } from '../Handlers/Chat.ts';
 import Feedback, { FeedbackObject } from '../Handlers/Feedback.ts';
 import History, { HistoryObject } from '../Handlers/History.ts';
@@ -8,7 +8,7 @@ import User from '../Models/User.ts';
 import Communicator from '../Handlers/Communicator.ts';
 import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
-import SessionError from '../Handlers/Errors/SessionError.ts';
+
 
 jest.mock('../Handlers/Chat.ts');
 jest.mock('../Handlers/Feedback.ts');
@@ -118,5 +118,4 @@ describe('Session', () => {
         expect(session['_history'][Symbol.dispose]).toHaveBeenCalled();
         expect(session['_user'][Symbol.dispose]).toHaveBeenCalled();
         expect(session['_communicator'][Symbol.dispose]).toHaveBeenCalled();
-    });
-});
+    })});

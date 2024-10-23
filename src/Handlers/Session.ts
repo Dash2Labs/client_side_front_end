@@ -1,7 +1,6 @@
 /**
  * @file Session.ts
- * @description This file contains the Session class which handles user sessions. And the HandleSignIn event emitter class which handles user sign in and sign out.
- * @version 1.0.0
+ * @description This file contains the Session class which handles user sessions.
  * @date 2023-10-05
  * 
  * @author Dustin Morris
@@ -16,10 +15,8 @@ import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
 import SessionError from './Errors/SessionError.ts';
 import Communicator from './Communicator.ts';
-import { EventEmitter } from 'events';
-import SessionManager from '../Managers/Session.ts';
 
-export class Session {
+export default class Session {
     private _chat!: Chat; // this is the chat handler is resposible for sending and receiving chat messages
     private _feedback!: Feedback;  // this is the feedback handler is resposible for sending and receiving feedback
     private _history!: History; // this is the history handler is resposible for getting the history
@@ -35,7 +32,7 @@ export class Session {
     * @param {string}
     * calls the initialize function. Which handles the user authentication and session initialization
     */
-    constructor(session_id: string | undefined) {
+    constructor(session_id?: string) {
         try {
             this._initialize(session_id);
             this.createdAt = new Date();
@@ -105,7 +102,7 @@ export class Session {
      * @calls initializeHandlers to initialize the handlers
      * @calls Communicator to initialize the communicator 
      */
-    private _initialize(session_id: string | undefined) {
+    private _initialize(session_id?: string) {
         this._initializeUser();
         if (this._user) {
             if(session_id) {
@@ -165,53 +162,4 @@ export class Session {
         if (this._user) this._user[Symbol.dispose]();
         if (this._communicator) this._communicator[Symbol.dispose]();
     }
-}
-
-/**
- * @description This is the HandleSignIn class which handles the user sign in and sign out
- * @works with the Session class to handle the user session and the sessionManager to manage the sessions
- * @extends EventEmitter
- * @def _session_id is the session id that is used to identify the session
- * @def _session is the session object that is used to handle the user session
- * @calls getSessionFromCookie to get the session id from the cookie
- * @calls setSessionCookie to set the session id in the cookie
- * @calls signIn to sign the user in
- * @calls signOut to sign the user out
- */
-
-class HandleSignIn extends EventEmitter {
-    private _session_id!: string;
-    public _session?: Session;
-
-    constructor() {
-        super();
-        this._session_id = this.getSessionFromCookie();
-    }
-
-    public signIn() {
-        if (!this._session) {
-                this._session = new Session(this._session_id);
-        }
-        SessionManager.addSession(this._session as Session);
-        this.emit("signedIn", this._session);
-    }
-
-    public signOut() {
-        if (this._session) {
-            SessionManager.removeSession(this._session.session_id);
-            this.setSessionCookie(this._session_id);
-            this._session = undefined;
-            this._session_id = "";  
-            this.emit("signedOut", this._session);
-        }
-    }
-
-    private getSessionFromCookie() {
-        return "";
-    }
-
-    private setSessionCookie(session_id: string) {
-    }
-}
-
-export default HandleSignIn
+};
