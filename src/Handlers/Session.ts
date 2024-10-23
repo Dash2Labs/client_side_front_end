@@ -13,8 +13,9 @@ import Settings, { SettingsObject } from './Settings.ts';
 import User from '../Models/User.ts';
 import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
-import SessionError from './Errors/SessionError.ts';
+import SessionError, { ChatSessionError, SettingsSessionError }  from './Errors/SessionError.ts';
 import Communicator from './Communicator.ts';
+import { getSizeInBytes } from '../Utilities/Utility.ts';
 
 export default class Session {
     private _chat!: Chat; // this is the chat handler is resposible for sending and receiving chat messages
@@ -36,7 +37,7 @@ export default class Session {
         try {
             this._initialize(session_id);
             this.createdAt = new Date();
-            this.expiresAt = new Date(this.createdAt.getTime() + 3600000); // 1 hour
+            this.expiresAt = new Date(this.createdAt.getTime() + constants.expirationTime);
         }
         catch (error) {
             if (constants.debug) {
@@ -59,6 +60,9 @@ export default class Session {
      * @description This is a callback function for the ui to send a chat message
      */
     public sendChat(question: ChatObject) {
+        if (question.question.length === 0 || getSizeInBytes(question) > constants.maxLength) {
+            throw new ChatSessionError("Invalid Question Length");
+        }
         return this._chat.sendQuestion(question);
     }
 
@@ -66,6 +70,9 @@ export default class Session {
      * @description This is a callback function for the ui to send feedback
      */
     public sendFeedback(feedback: FeedbackObject) {
+        if (getSizeInBytes(feedback) > constants.maxLength) {
+            console.error("Feedback too long"); // won't throw for feedback error
+        }
         return this._feedback.sendFeedback(feedback);
     }
 
@@ -87,6 +94,9 @@ export default class Session {
      *@description This is a callback function for the ui to set configuration settings  
      */
      public setSettings(settings: SettingsObject) {
+        if (getSizeInBytes(settings) > constants.maxLength) {
+            throw new SettingsSessionError("Settings too long");
+        }
         this._settings.setSettings(settings);
     }
 

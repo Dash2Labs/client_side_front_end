@@ -6,9 +6,11 @@ export namespace constants {
     const redirect_uri: string;
     const useauth: boolean;
     const product_title: string;
-    const customer_logo: string,
-    const home_image_1: string,
-    const home_image_2: string,
-    const home_image_3: string,
+    const customer_logo: string;
+    const home_image_1: string;
+    const home_image_2: string;
+    const home_image_3: string;
     const debug: boolean;
-};
+    const maxLength: number;
+    const expirationTime: number;
+}
