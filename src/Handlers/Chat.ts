@@ -15,6 +15,11 @@ export interface ChatObject {
     question: string;
 };
 
+/**
+ * @class Chat
+ * @description Handles chat-related operations by communicating with the backend API.
+ * @property {Communicator} _communicator - An instance of the Communicator class used to send requests.
+ */
 class Chat {
     private _communicator: Communicator;
 
@@ -22,6 +27,13 @@ class Chat {
         this._communicator = communicator;
     }
 
+    /** 
+    * @method sendQuestion
+    * @description Sends a chat question to the backend API and returns the response message.
+    * @param {ChatObject} question - The chat question object to be sent.
+    * @returns {Message} - The response message from the backend API.
+    * @throws {ChatSessionError} - Throws an error if the request fails or the response status is not 200.
+    */
     public sendQuestion(question: ChatObject): Message {
         const url: string = "/api/chat"; // TODO: Do we need to verify we have cleaned data here?
         let response: any;  // eslint-disable-line

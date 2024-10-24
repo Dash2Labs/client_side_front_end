@@ -18,13 +18,23 @@ export interface FeedbackObject {
   responseTime: number; // Time taken by the bot to generate the response (in milliseconds)
 }
 
+/**
+ * @class Feedback
+ * @description Handles user feedback operations by communicating with the backend API.
+ * @property {Communicator} _communicator - An instance of the Communicator class used to send requests.
+ */
 class Feedback {
     private _communicator: Communicator;
 
     constructor (communicator: Communicator) {
         this._communicator = communicator;
     }
-
+    /**
+     * @method sendFeedback
+     * @description Sends user feedback to the server
+     * @param feedback 
+     * @returns boolean indicating success or failure of the operation
+     */
     public sendFeedback(feedback: FeedbackObject): boolean{
         const url: string = "/api/feedback"; // TODO: Do we need to verify we have cleaned data here?
         let response: any; // eslint-disable-line

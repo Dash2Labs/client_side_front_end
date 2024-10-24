@@ -16,7 +16,22 @@ import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
 import SessionError, { ChatSessionError, SettingsSessionError }  from './Errors/SessionError.ts';
 import Communicator from './Communicator.ts';
 import { getSizeInBytes } from '../Utilities/Utility.ts';
+import { Message } from '../Models/Message.ts';
 
+/**
+ * @class Session
+ * @description Handles user sessions by providing access to chat, feedback, history, and settings operations.
+ * This class is the interface between the user interface and the backend API.
+ * @property {Chat} _chat - An instance of the Chat class used to handle chat operations.
+ * @property {Feedback} _feedback - An instance of the Feedback class used to handle feedback operations.
+ * @property {History} _history - An instance of the History class used to handle history operations.
+ * @property {Settings} _settings - An instance of the Settings class used to handle settings operations.
+ * @property {User} _user - An instance of the User class used to handle user authentication.
+ * @property {Communicator} _communicator - An instance of the Communicator class used to send requests.
+ * @property {Date} createdAt - The date and time the session was created.
+ * @property {Date} expiresAt - The date and time the session will expire.
+ * @property {string} session_id - The unique identifier for the session.
+ */
 export default class Session {
     private _chat!: Chat; // this is the chat handler is resposible for sending and receiving chat messages
     private _feedback!: Feedback;  // this is the feedback handler is resposible for sending and receiving feedback
@@ -28,10 +43,10 @@ export default class Session {
     public expiresAt!: Date; // this is the date the session will expire
     public session_id!: string; // this is the session id that is used to identify the session
 
-    /*
+    /**
     * @description This is the constructor for the Session class
-    * @param {string}
-    * calls the initialize function. Which handles the user authentication and session initialization
+    * @param {string?} session_id
+    * @calls _initialize to initialize the session
     */
     constructor(session_id?: string) {
         try {
@@ -57,9 +72,13 @@ export default class Session {
     }
 
     /**
+     * @method sendChat
      * @description This is a callback function for the ui to send a chat message
+     * @param {ChatObject} question
+     * @throws {ChatSessionError} if the question is invalid
+     * @returns {Message} the response message from the server
      */
-    public sendChat(question: ChatObject) {
+    public sendChat(question: ChatObject): Message {
         if (question.question.length === 0 || getSizeInBytes(question) > constants.maxLength) {
             throw new ChatSessionError("Invalid Question Length");
         }
@@ -67,9 +86,12 @@ export default class Session {
     }
 
     /**
+     * @method sendFeedback
      * @description This is a callback function for the ui to send feedback
+     * @param {FeedbackObject} feedback
+     * @returns {boolean} indicating success or failure of the operation
      */
-    public sendFeedback(feedback: FeedbackObject) {
+    public sendFeedback(feedback: FeedbackObject): boolean {
         if (getSizeInBytes(feedback) > constants.maxLength) {
             console.error("Feedback too long"); // won't throw for feedback error
         }
@@ -77,21 +99,28 @@ export default class Session {
     }
 
     /**
+     * @method getHistory
      * @description This is a callback function for the ui to get the history
+     * @returns {HistoryObject} the history of user sessions
      */
     public getHistory(): HistoryObject {
         return this._history.getHistory();
     }
 
     /**
-     *@description This is a callback function for the ui to get configuration settings  
+     * @method getSettings
+     * @description This is a callback function for the ui to get configuration settings
+     * @returns {SettingsObject} the configuration settings
      */
      public getSettings() {
         return this._settings.getSettings();
     }
 
     /**
-     *@description This is a callback function for the ui to set configuration settings  
+     * @method setSettings
+     * @description This is a callback function for the ui to set configuration settings
+     * @param {SettingsObject} settings
+     * @throws {SettingsSessionError} if the settings are too long
      */
      public setSettings(settings: SettingsObject) {
         if (getSizeInBytes(settings) > constants.maxLength) {

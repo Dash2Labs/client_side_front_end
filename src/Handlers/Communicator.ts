@@ -13,6 +13,13 @@ import { ChatObject } from "./Chat.ts";
 import { SettingsObject } from "./Settings.ts";
 
 type RequestBody = FeedbackObject | HistoryObject | ChatObject | SettingsObject;
+
+/**
+ * @class Communicator
+ * @description A class responsible for handling communication with the server.
+ * @param session_id - The session ID for the current user session.
+ * @param user_id - The user ID for the current user.
+ */
 class Communicator {
     private _maxRetries: number = 2;
     private _retryCount: number = 0;
@@ -39,7 +46,6 @@ class Communicator {
      * @returns a promise that resolves to the response from the server
      * @throws an error if the request fails
      */
-
     public async getRequest(url: string,
                             custom_headers: typeof AxiosHeaders | object): 
                             Promise<AxiosResponse<any, any>> // eslint-disable-line
@@ -77,6 +83,7 @@ class Communicator {
         console.error("getRequest: MaxRetries exceeded Error sending request");
         throw new Error("MaxRetries exceeded Error sending request");
     }
+    
     /**
      * @description This function sends a request to the server
      * @param url
@@ -84,7 +91,6 @@ class Communicator {
      * @returns a promise that resolves to the response from the server
      * @throws an error if the request fails
      */
-
     public async postRequest(body: RequestBody,
                                url: string,
                                custom_headers: typeof AxiosHeaders | object): Promise<any> {  // eslint-disable-line
@@ -121,6 +127,11 @@ class Communicator {
         throw new Error("MaxRetries exceeded Error sending request");
     }
 
+    /**
+     * @description This function appends custom headers to the default headers
+     * @param custom_headers
+     * @private
+     */
     private _appendHeaders(custom_headers: typeof AxiosHeaders | object): void {
         const headers = {
             ...this._defaultHeaders, ...custom_headers, 

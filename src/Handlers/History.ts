@@ -14,6 +14,11 @@ export interface HistoryObject {
     history: Message[];
 };
 
+/**
+ * @class History
+ * @description Handles history-related operations by communicating with the backend API.
+ * @property {Communicator} _communicator - An instance of the Communicator class used to send requests.
+ */
 class History {
     private _communicator!: Communicator;
 
@@ -21,6 +26,11 @@ class History {
         this._communicator = communicator;
     }
 
+    /**
+     * @method getHistory
+     * @description Gets the history of user sessions from the backend API.
+     * @returns {HistoryObject} - The history of user sessions.
+     */
     public getHistory(): HistoryObject {
         const url: string = "/api/history";
         let response: any; // eslint-disable-line

@@ -1,3 +1,11 @@
+/**
+ * @file api.ts
+ * @description This file contains the API routes for the client server.
+ * @version 1.0.0
+ * @date 2023-10-05
+ * 
+ * @author Dustin Morris
+ */
 import { express, axios, constants, defaultHeaders, uuiv4, handleResponse } from '../common_imports.js';
 import er from '../errors.js';
 import { getSizeInBytes } from '../Utilities/Utility.js';

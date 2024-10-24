@@ -1,3 +1,11 @@
+/**
+ * @file index.ts
+ * @description This file contains the main entry point for the client server.
+ * @version 1.0.0
+ * @date 2023-10-05
+ * 
+ * @author Dustin Morris
+ */
 import express, { Router } from 'express';
 import { path, fs, resolvePath, _dirname_ } from './common_imports.js';
 import * as dotx from '@dotenvx/dotenvx';

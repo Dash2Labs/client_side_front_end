@@ -1,3 +1,11 @@
+/**
+ * @file resolve_ts_path.ts
+ * @description This file contains a function that resolves the given path based on the typescript configuration paths property.
+ * @version 1.0.0
+ * @date 2023-10-05
+ * 
+ * @author Dustin Morris
+ */
 import { path, fs, _dirname_ } from './common_imports.js';
 
 /**

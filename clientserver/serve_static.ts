@@ -1,3 +1,11 @@
+/**
+ * @file serve_static.ts
+ * @description This file contains the serveStatic function which serves static files with gzip and brotli compression.
+ * @version 1.0.0
+ * @date 2023-10-05
+ * 
+ * @author Dustin Morris
+ */
 import expressStaticGzip, { ExpressStaticGzipOptions } from 'express-static-gzip';
 import { Request, Response, NextFunction } from 'express';
 

@@ -11,15 +11,28 @@ import { v4 as uuidv4 } from 'uuid';
 import { getMyId, getProfile } from '../Authorization/Msgraph.ts';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
 
+/**
+ * @class User
+ * @description Contains the user information.
+ * @property {string} _user_id - The user's unique identifier.
+ * @property {string} _photo - The user's photo.
+ */
 class User {
     private _user_id?: string = "";
     private _photo?: string = "";
 
     constructor(anonymous: boolean = false) {
-        this.initialize(anonymous);
+        this._initialize(anonymous);
     }
 
-    private async initialize(anonymous: boolean) {
+    /**
+     * @method _initialize
+     * @description Initializes the user object.
+     * @param {boolean} anonymous - Indicates if the user is anonymous.
+     * @throws {AuthorizationError} - Throws an error if the user is not authorized.
+     * @returns {Promise<void>} - A promise that resolves when the user object is initialized.
+     */
+    private async _initialize(anonymous: boolean) {
         if (!anonymous) {
             this._user_id = await getMyId();
             if (!this._user_id) {
