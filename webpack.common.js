@@ -23,6 +23,9 @@ let __CUSTOMER_LOGO__;
 let __HOME_IMAGE_1__;
 let __HOME_IMAGE_2__;
 let __HOME_IMAGE_3__;
+let __CUSTOMER_SETTINGS__;
+let __MAX_LENGTH__;
+let __EXPIRATION_TIME__;
 const loadCustomerSettings = function () {
     // Read customer settings from a json file
     const file = 'customerSettings.json';
@@ -60,6 +63,9 @@ const setupClientServer = function () {
     __HOME_IMAGE_1__ = config.homeImage1;
     __HOME_IMAGE_2__ = config.homeImage2;
     __HOME_IMAGE_3__ = config.homeImage3;
+    __CUSTOMER_SETTINGS__ = config.customerSettings;
+    __MAX_LENGTH__ = config.maxLength;
+    __EXPIRATION_TIME__ = config.expirationTime;
 };
 
 setupClientServer();
@@ -67,26 +73,15 @@ setupClientServer();
 const common = function (env, argv) {
     const mode = argv.mode || 'production';
     const entry = {
-        index: path.join(__dirname, 'Client/index.tsx'),
-        chatbox: path.join(__dirname, 'Client/views/chatbox.tsx'),
-        app: path.join(__dirname, 'Client/views/app.tsx'),
-        spinner: path.join(__dirname, 'Client/views/spinner.tsx'),
-        history: path.join(__dirname, 'Client/views/history.tsx'),
-        FileListerView: path.join(__dirname, 'Client/views/FileLister.tsx'),
-        FileUpload: path.join(__dirname, 'Client/views/FileUpload.tsx'),
-        chatHandler: path.join(__dirname, 'Client/controllers/chatHandler.ts'),
-        fileLister: path.join(__dirname, 'Client/controllers/fileLister.ts'),
-        greetings: path.join(__dirname, 'Client/views/greeting.tsx'),
-        history1 : path.join(__dirname, 'Client/views/history.tsx' 
-        )
+        index: path.join(__dirname, 'src/index.tsx')
     };
     const output = {
-        path: path.join(__dirname, "ClientServer/public"),
+        path: path.join(__dirname, "public"),
         filename: '[name].bundle.js',
         clean: true
     };
     const htmlpluginoptions = {
-        template: path.join(__dirname, 'Client/index.html'),
+        template: path.join(__dirname, '/clientserver/static_files/index.html'),
         filename: 'index.html',
         inject: 'body',
         templateParameters: {
@@ -117,19 +112,22 @@ const common = function (env, argv) {
             "__CUSTOMER_LOGO__": JSON.stringify(__CUSTOMER_LOGO__),
             "__HOME_IMAGE_1__": JSON.stringify(__HOME_IMAGE_1__),
             "__HOME_IMAGE_2__": JSON.stringify(__HOME_IMAGE_2__),
-            "__HOME_IMAGE_3__": JSON.stringify(__HOME_IMAGE_3__)
+            "__HOME_IMAGE_3__": JSON.stringify(__HOME_IMAGE_3__),
+            "__CUSTOMER_SETTINGS__": JSON.stringify(__CUSTOMER_SETTINGS__),
+            "__MAX_LENGTH__":JSON.stringify(__MAX_LENGTH__),
+            "__EXPIRATION_TIME__": JSON.stringify(__EXPIRATION_TIME__)
         }),
         new FileManagerPlugin(
             {
                 events: {
                     onEnd: {
                         copy: [
-                            {source: "ClientServer/assets/*",
-                             destination: "ClientServer/public/assets"
+                            {source: "clientserver/assets/*",
+                             destination: "public/assets"
                             },
                             {
-                             source: "ClientServer/redirect.html",
-                             destination: "ClientServer/public/redirect.html"
+                             source: "clientserver/static_files/redirect.html",
+                             destination: "public/redirect.html"
                             }
                         ]
                     }

@@ -9,5 +9,8 @@
     "homeImage1": "./assets/police.png",
     "homeImage2": "./assets/firefighters.png",
     "homeImage3": "./assets/emt.png",
-    "chatIcon": "./assets/chatIcon.png"
+    "chatIcon": "./assets/chatIcon.png",
+    "maxLength": 1000,
+    "expirationTime": 300000,
+    "customerSettings": {}
 }

@@ -1,0 +1,1 @@
+export const handleResponse = jest.fn();

@@ -4,7 +4,7 @@ import * as dotx from '@dotenvx/dotenvx';
 dotx.config();
 import logger from 'morgan';
 import compression from 'compression';
-import serveStatic from './serve_static';
+import serveStatic from './serve_static.js';
 
 if (process.env.NODE_ENV === 'production') {
     console.log("Client Server is running in PRODUCTION mode");

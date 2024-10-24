@@ -11,5 +11,6 @@ export default [
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   pluginReact.configs.flat["jsx-runtime"],
-  {"settings": {"react": {"version": "detect"}}}
+  {"settings": {"react": {"version": "detect"}}},
+  {"ignores": ["node_modules/*", "out/*", "public/*", "**/__mocks__/*", "**/__tests__/*", "**/*.d.ts"]},
 ];

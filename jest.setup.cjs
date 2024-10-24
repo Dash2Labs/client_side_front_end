@@ -9,3 +9,5 @@ global.__HOME_IMAGE_1__ = "";
 global.__HOME_IMAGE_2__ = "";
 global.__HOME_IMAGE_3__ = "";
 global.__DEBUG__ =false;
+global.__MAX_LENGTH__ = 500;
+global.__EXPIRATION_TIME__ = 300000;

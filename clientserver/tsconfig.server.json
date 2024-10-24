@@ -11,10 +11,11 @@
             "es2023"
         ],
         "composite": true,
-        "outDir": "../server",
+        "outDir": "../dist/server",
         "rootDir": ".",
         "paths": {
-            "@public/*": ["./public/*"]
+            "@public/*": ["../public/*"],
+            "@assets/*": ["./assets/*"],
         }
     },
     "include": ["**/*.ts"]

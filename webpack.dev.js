@@ -12,7 +12,7 @@ const dev = function (env, argv) {
             },
             compress: true,
             open: true,
-            static: './ClientServer/public',
+            static: './public',
         },
         stats: {
             errorDetails: true,

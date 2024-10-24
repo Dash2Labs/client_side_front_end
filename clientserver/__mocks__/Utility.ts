@@ -1,0 +1,1 @@
+export const getSizeInBytes = jest.fn(()=> 500);
