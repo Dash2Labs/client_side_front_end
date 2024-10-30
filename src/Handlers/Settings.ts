@@ -10,6 +10,7 @@
 import Communicator from "./Communicator.ts";
 import { AxiosResponse } from "axios";
 import { SettingsSessionError } from "../Handlers/Errors/SessionError.ts";
+import AuthorizationError from "../Authorization/Errors/AuthorizationError.ts";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SettingsObject {
@@ -52,6 +53,9 @@ class Settings {
             if (response.status === 206) {
                 user_settings = response.data['user_settings'];
             }
+            if (response.status === 403) {
+                throw new AuthorizationError("Error getting settings: Unauthorized");
+            }
             return {client_settings: client_settings, user_settings: user_settings} as SettingsObject;
         }
         throw new SettingsSessionError("Error getting settings");
@@ -70,6 +74,9 @@ class Settings {
             response = res;
         }).catch((error) => {
             console.error("Error setting settings: ", error);
+            if (error.response.status === 403) {
+                throw new AuthorizationError("Error setting settings: Unauthorized");
+            }
             throw error;
         });
     }

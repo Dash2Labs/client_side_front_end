@@ -17,6 +17,7 @@ import SessionError, { ChatSessionError, SettingsSessionError }  from './Errors/
 import Communicator from './Communicator.ts';
 import { getSizeInBytes } from '../Utilities/Utility.ts';
 import { Message } from '../Models/Message.ts';
+import xss from 'xss';
 
 /**
  * @class Session
@@ -82,6 +83,7 @@ export default class Session {
         if (question.question.length === 0 || getSizeInBytes(question) > constants.maxLength) {
             throw new ChatSessionError("Invalid Question Length");
         }
+        question.question = xss(question.question);
         return this._chat.sendQuestion(question);
     }
 
@@ -95,7 +97,17 @@ export default class Session {
         if (getSizeInBytes(feedback) > constants.maxLength) {
             console.error("Feedback too long"); // won't throw for feedback error
         }
-        return this._feedback.sendFeedback(feedback);
+        feedback.feedback = xss(feedback.feedback);
+        feedback.question = xss(feedback.question);
+        feedback.response = xss(feedback.response);
+        feedback.feedbackId = xss(feedback.feedbackId);
+
+        try {
+            return this._feedback.sendFeedback(feedback);
+        } catch (error) {
+            console.error("Error sending feedback: ", error);
+            return false;
+        }
     }
 
     /**
@@ -118,7 +130,7 @@ export default class Session {
 
     /**
      * @method setSettings
-     * @description This is a callback function for the ui to set configuration settings
+     * @description This is a callback function for the ui to set configuration settings.  Client settings are ignored.  Only user settings.
      * @param {SettingsObject} settings
      * @throws {SettingsSessionError} if the settings are too long
      */
@@ -126,10 +138,9 @@ export default class Session {
         if (getSizeInBytes(settings) > constants.maxLength) {
             throw new SettingsSessionError("Settings too long");
         }
+        settings.user_settings = xss(settings.user_settings);
         this._settings.setSettings(settings);
     }
-
-    // TODO: Since we are setting configuration for the user we should be able to save their configuration
     
     /**
      * @description This is the initlize function that is called at the beginning of createing the session. 
@@ -141,11 +152,15 @@ export default class Session {
      * @calls initializeHandlers to initialize the handlers
      * @calls Communicator to initialize the communicator 
      */
-    private _initialize(session_id?: string) {
+    private async _initialize(session_id?: string) {
         this._initializeUser();
         if (this._user) {
             if(session_id) {
-                this.session_id = session_id;  //TODO: validate session id
+                this.session_id = xss(session_id);
+                const isValid = await this._validActiveSession(session_id);
+                if(!isValid) {
+                    this.session_id = uuidv4();  // session id is invalid so we create a new one
+                }
             }
             else {
                 this.session_id = uuidv4();  // ui didn't give us a session id so we create a new one
@@ -156,6 +171,7 @@ export default class Session {
         else {
             throw new AuthorizationError("User not authorized");
         }
+        this._addActiveSession();
     }
     
     /** 
@@ -192,6 +208,36 @@ export default class Session {
             this._history = new History(this._communicator);
             this._settings = new Settings(this._communicator);
         }
+    }
+
+    /**
+     * @description This function validates the session id
+     * @param {string} session_id
+     */
+    private async _validActiveSession(session_id: string): Promise<boolean> {
+        const temp_communicator = new Communicator(uuidv4(), "temp_session");
+        temp_communicator.getRequest(`/session/active/${session_id}`, {}).then((res) => {
+            if (res.status !== 200) {
+                return false;
+            }
+        }).catch((error) => {
+            console.error("Error validating session: ", error);
+            return false;
+        });
+        return true;
+    }
+
+    /**
+     * @description This function adds the session to the active sessions
+     */
+    private _addActiveSession() {
+        this._communicator.postRequest({}, `/session/active/${this.session_id}`, {}).then((res) => {
+            if (res.status !== 200) {
+                console.error("Error adding session: ", res.status);
+            }
+        }).catch((error) => {
+            console.error("Error adding session: ", error);
+        });
     }
 
     [Symbol.dispose]() {

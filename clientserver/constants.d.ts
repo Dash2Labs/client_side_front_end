@@ -5,4 +5,5 @@ export namespace constants {
     const useAuth: boolean;
     const client_settings: any;
     const maxLength: number;
+    const expirationTime: number;
 }

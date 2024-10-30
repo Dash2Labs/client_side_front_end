@@ -7,6 +7,8 @@ import * as axios from 'axios';
 import { constants } from './constants.js';
 import { v4 as uuiv4 } from 'uuid';
 import er from './errors.js';
+import { SessionManager } from './SessionManager.js';
+import xss from 'xss';
 
 const _filename_ = (import_meta_url: string) => fileURLToPath(import_meta_url);
 const _dirname_ = (import_meta_url: string) => path.dirname(_filename_(import_meta_url));
@@ -23,6 +25,19 @@ const handleResponse = (res: express.Response, response: axios.AxiosResponse, co
         res.status(response.status).appendHeader("correlation-id",correlationId).send(er.unknownError);
     }
 };
+
+const cleanHeader = (req: express.Request, str: string): string => {
+    const header: string = Array.isArray(req.headers[str]) ? req.headers[str][0] : req.headers[str] || "";
+    return xss(header);
+};
+
+const checkSession = (res: express.Response, sessionId: string) => {
+    if (sessionId === "" || !SessionManager.updateActiveSession(sessionId)) {
+        res.status(403).setHeader("dash2labs-session-id", sessionId).send('Session is not active');
+        // TODO: Add logging here
+    }
+}
+
 export { express,
          axios,
          path,
@@ -33,4 +48,8 @@ export { express,
          constants,
          defaultHeaders,
          uuiv4,
-         handleResponse };
+         handleResponse,
+         cleanHeader,
+         checkSession,
+         SessionManager,
+         xss };

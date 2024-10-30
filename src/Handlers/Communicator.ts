@@ -11,6 +11,7 @@ import { FeedbackObject } from "./Feedback.ts";
 import { HistoryObject } from "./History.ts";
 import { ChatObject } from "./Chat.ts";
 import { SettingsObject } from "./Settings.ts";
+import AuthorizationError from "../Authorization/Errors/AuthorizationError.ts";
 
 type RequestBody = FeedbackObject | HistoryObject | ChatObject | SettingsObject;
 
@@ -48,19 +49,19 @@ class Communicator {
      */
     public async getRequest(url: string,
                             custom_headers: typeof AxiosHeaders | object): 
-                            Promise<AxiosResponse<any, any>> // eslint-disable-line
+                            Promise<AxiosResponse>
     {
         // Send request to the server
         this._appendHeaders(custom_headers);
         while (this._retryCount <= this._maxRetries) {
                 const response = await axios.get(url, this._config).then((response) => {
+                if (response.status === 206) {
+                    // Partial Success
+                    console.error("getRequest: Partial Content Error sending request: ", response);
+                }
                 if (response.status >= 200 && response.status < 300) {
-                    if (response.status === 206) {
-                        // Partial Success
-                        console.error("getRequest: Partial Content Error sending request: ", response);
-                    }
                     // Success
-                    return response;
+                    return response as unknown as AxiosResponse;
                 }
             }).catch((error) => {
                 if (this._retryCount >= this._maxRetries) {
@@ -73,11 +74,14 @@ class Communicator {
                 } else {
                     console.error("Error sending request: ", error);
                     this._retryCount = this._maxRetries + 1;
+                    if (error.response.status === 403) {
+                        throw new AuthorizationError("Error sending request: Unauthorized");
+                    }
                     throw error;
                 }
             });
             if (response) {
-                return response;
+                return response as unknown as AxiosResponse;
             }
         }
         console.error("getRequest: MaxRetries exceeded Error sending request");
@@ -93,7 +97,7 @@ class Communicator {
      */
     public async postRequest(body: RequestBody,
                                url: string,
-                               custom_headers: typeof AxiosHeaders | object): Promise<any> {  // eslint-disable-line
+                               custom_headers: typeof AxiosHeaders | object): Promise<AxiosResponse<any,any>> { // eslint-disable-line
         // Send request to the server
         this._appendHeaders(custom_headers);
         while (this._retryCount <= this._maxRetries) {
@@ -102,7 +106,7 @@ class Communicator {
                 .then((response) => {
                     if (response.status >= 200 && response.status < 300) {
                         // Success
-                        return response;
+                        return response as unknown as AxiosResponse;
                     }
                 })
                 .catch((error) => {
@@ -117,10 +121,14 @@ class Communicator {
                     else {
                         console.error("Error sending request: ", error);
                         this._retryCount = this._maxRetries + 1;
+                        if (error.response.status === 403) {
+                            throw new AuthorizationError("Error sending request: Unauthorized");
+                        }
+                        throw error;     
                     }
                 });
             if (response) {
-                return response;
+                return response as unknown as AxiosResponse;
             }
         }
         console.error("postRequest: MaxRetries exceeded Error sending request");

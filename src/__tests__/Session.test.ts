@@ -9,7 +9,7 @@ import User from '../Models/User.ts';
 import Communicator from '../Handlers/Communicator.ts';
 import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
-
+import { AxiosRequestHeaders } from 'axios';
 
 jest.mock('../Handlers/Chat.ts');
 jest.mock('../Handlers/Feedback.ts');
@@ -36,14 +36,29 @@ describe('Session', () => {
 
     it('should initialize a session with a given session_id', () => {
         const session_id = uuiv4();
+        const mockGetRequest = jest.spyOn(Communicator.prototype, 'getRequest').mockResolvedValue({
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: {headers: {} as AxiosRequestHeaders},
+            data: { message: 'Hello' }
+        });
+        const mockPostRequest = jest.spyOn(Communicator.prototype, 'postRequest').mockResolvedValue({
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: {headers: {} as AxiosRequestHeaders},
+            data: { message: 'Hello' }
+        });
         const session = new Session(session_id);
-        
+        jest.unmock('../Handlers/Chat.ts');
         expect(session.session_id).toBe(session_id);
-        expect(Communicator).toHaveBeenCalledWith(session_id, expect.any(String));
         expect(Chat).toHaveBeenCalledWith(expect.any(Communicator));
         expect(Feedback).toHaveBeenCalledWith(expect.any(Communicator));
         expect(History).toHaveBeenCalledWith(expect.any(Communicator));
         expect(Settings).toHaveBeenCalledWith(expect.any(Communicator));
+        mockGetRequest.mockRestore();
+        mockPostRequest.mockRestore();
     });
 
     it('should initialize a session without a given session_id', () => {

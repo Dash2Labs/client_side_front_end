@@ -1,7 +1,8 @@
 import { EventEmitter } from "events";
 import Session from "./Session.ts";
 import SessionManager from "../Managers/Session.ts";
-
+import xss from "xss";
+import { constants } from "../constants.js";
 /**
  * @description This is the HandleSignIn class which handles the user sign in and sign out
  * @works with the Session class to handle the user session and the sessionManager to manage the sessions
@@ -65,7 +66,20 @@ class HandleSignIn extends EventEmitter {
      */
     private _getSessionFromCookie(): string {
         const defaultSessionId = "e7b8a6d4-3f2a-4b8a-9f3b-2d6a8e4f9c3e";
-        return defaultSessionId; //TODO: get session id from cookie
+        const name = "session_id=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const cookieArray = decodedCookie.split(';');
+        for (let i = 0; i < cookieArray.length; i++) {
+            const cookie = cookieArray[i].trim();
+            // check for xss
+            if (cookie.indexOf(name) === 0 && JSON.stringify(cookie).length !== xss(JSON.stringify(cookie)).length) {
+                return defaultSessionId;
+            }
+            if (cookie.indexOf(name) === 0) {
+                return cookie.substring(name.length, cookie.length);
+            }
+        }
+        return defaultSessionId; // Return default session id if not found
     }
 
     /**
@@ -75,7 +89,12 @@ class HandleSignIn extends EventEmitter {
      * @returns void
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    private _setSessionCookie(session_id: string) {  //TODO: set session id in cookie
+    private _setSessionCookie(session_id: string) {
+        const cookieName = "session_id";
+        const expires = new Date();
+        expires.setTime(expires.getTime() + constants.expirationTime + 10000);
+        const cookieValue = `${cookieName}=${session_id}; expires=${expires.toUTCString()}; path=/`;
+        document.cookie = cookieValue;
     }
 
     /**
@@ -84,7 +103,12 @@ class HandleSignIn extends EventEmitter {
      * @param session_id 
      * @returns void
      */
-    private _removeSessionCookie(session_id: string) {  //TODO: remove session id from cookie
+    private _removeSessionCookie(session_id: string) {
+        const cookieName = "session_id";
+        const expires = new Date();
+        expires.setTime(expires.getTime() - 10000);
+        const cookieValue = `${cookieName}=${session_id}; expires=${expires.toUTCString()}; path=/`;
+        document.cookie = cookieValue;
     }
 
     public get session_id(): string {

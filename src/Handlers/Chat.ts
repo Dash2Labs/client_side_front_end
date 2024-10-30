@@ -35,7 +35,7 @@ class Chat {
     * @throws {ChatSessionError} - Throws an error if the request fails or the response status is not 200.
     */
     public sendQuestion(question: ChatObject): Message {
-        const url: string = "/api/chat"; // TODO: Do we need to verify we have cleaned data here?
+        const url: string = "/api/chat";
         let response: any;  // eslint-disable-line
         this._communicator.postRequest(question, url, {}).then((res) => {
                 response = res;

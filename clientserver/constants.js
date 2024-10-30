@@ -5,4 +5,5 @@ export const constants = {
     useAuth: __USE_AUTH__,
     client_settings: __CLIENT_SETTINGS__,
     maxLength: __MAX_LENGTH__,
+    expirationTime: __EXPIRATION_TIME__,
 };
