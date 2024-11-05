@@ -25,12 +25,11 @@ const APP = express();
 const PORT = process.env.PORT || 3000;
 
 loadRoutes().then(() => {
-    if (routes["root"]) {
-        APP.use('/', routes["root"]);
-    }
     for (const [route, router] of Object.entries(routes)) {
         if (route !== "root") {
             APP.use(`/${route}`, router);
+        } else {
+            APP.use('/', router);
         }
     }
 }).catch((error) => {
