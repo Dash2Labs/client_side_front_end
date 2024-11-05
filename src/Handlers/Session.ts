@@ -153,7 +153,16 @@ export default class Session {
      * @calls Communicator to initialize the communicator 
      */
     private async _initialize(session_id?: string) {
-        this._initializeUser();
+        try {
+            this._initializeUser();
+        } catch (error) {
+            if (error instanceof AuthorizationError) {
+                throw error;
+            }
+            else {
+                throw new AuthorizationError("User not authorized");
+            }
+        }
         if (this._user) {
             if(session_id) {
                 this.session_id = xss(session_id);
@@ -180,7 +189,7 @@ export default class Session {
     * @def constant useauth is used to determine if we are using authentication
     * @find description of the user object in the User class
     */
-    private _initializeUser() {
+    private async _initializeUser() {
         if (!this._user && constants.useauth)
         {
             this._user = new User(false); // populate user from auth

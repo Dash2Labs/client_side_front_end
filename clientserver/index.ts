@@ -27,8 +27,11 @@ const PORT = process.env.PORT || 3000;
 loadRoutes().then(() => {
     if (routes["root"]) {
         APP.use('/', routes["root"]);
-    } else if (routes["api"]) {
-        APP.use('/api', routes["api"]);
+    }
+    for (const [route, router] of Object.entries(routes)) {
+        if (route !== "root") {
+            APP.use(`/${route}`, router);
+        }
     }
 }).catch((error) => {
     console.error('Error loading routes:', error);
