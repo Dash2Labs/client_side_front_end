@@ -66,7 +66,7 @@ export default class Session {
                 if (error instanceof Error) {
                     throw new SessionError("Session initialization failed: " + error.message + " " + error.stack);
                 } else {
-                    throw new SessionError("Session initialization failed: Unknown error");
+                    throw new SessionError("Session initialization failed: Unknown error" + error);
                 }
             }
         }
