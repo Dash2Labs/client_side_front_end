@@ -1,0 +1,17 @@
+{
+    "serverUri": "https://orion-server.internal.yellowground-355afd47.westus2.azurecontainerapps.io",
+    "clientUri": "https://orion.yellowground-355afd47.westus2.azurecontainerapps.io",
+    "appAuthority": "https://login.microsoftonline.com/97a552aa-225a-4ecb-b4ef-c44c2ebef7a0",
+    "appId": "2d03d64a-e6d6-49fd-b582-b2f7a7aa435f",
+    "productTitle": "Orion",
+    "clientServerIp": "0.0.0.0",
+    "customerLogo": "./assets/NM_IT.png",
+    "homeImage1": "./assets/police.png",
+    "homeImage2": "./assets/firefighters.png",
+    "homeImage3": "./assets/emt.png",
+    "chatIcon": "./assets/chatIcon.png",
+    "maxLength": 1000,
+    "expirationTime": 300000,
+    "useAuth": false,
+    "customerSettings": {}
+}

@@ -1,37 +1,42 @@
-# Node.js
+# Node modules
 node_modules/
-npm-debug.log
-yarn-error.log
+# credentials
+**/credentials*
+**/secrets*
+*.pem
+*.key
 
-# React
-clientserver/public
-out/
-
-# Server
-server/
-
-# Webpack
-!webpack*
-!eslint.config.js
-
-# TypeScript
-*.js
-*.js.map
-*.d.ts
-
-# IDE/Editor specific
 .vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
+out/
+public/
+dist/
 
-# Logs
-logs/
-*.log
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
 
-# OS generated files
-.DS_Store
-Thumbs.db
+**/*.js
+**/*.map
+!webpack.*.js
+**/*.bundle.js.br
+**/*.bundle.js.gz
+**/*.txt
+public/*.css
+**/*.css.br
+**/*.css.gz
+**/*.css
 
-# Secrets
-.env.keys
+!stylesheets/*.css
+!**/stylesheets/*.css
+!**/constants.js
+Server/.server
+*.rdb
+!clientserver/constants.js
+
+*.d.ts
+!*constants.d.ts
+public/*
+out/*
+
+.vscode/

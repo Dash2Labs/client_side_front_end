@@ -2,20 +2,20 @@
   "extends": "../tsconfig.custom.base.json",
   "compilerOptions": {
     "lib": [
-      "es2023",
+      "ESNext",
       "dom",
       "dom.iterable"
     ],
     "composite": true,
-    "target": "ES2023",
-    "allowImportingTsExtensions": true,
+    "target": "ESNext",
     "declaration": true,
     "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "outDir": "../out"
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "../src/**/*"
   ]
+  
 }

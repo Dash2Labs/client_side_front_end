@@ -5,16 +5,18 @@
         "sourceMap": true,
         "declarationMap": true,
         "declaration": true,
-        "emitDeclarationOnly": false,
+        "emitDeclarationOnly": true,
+        "allowImportingTsExtensions": true,
         "noEmit": false,
         "lib": [
             "es2023"
         ],
         "composite": true,
-        "outDir": "../server",
+        "outDir": "../dist/server",
         "rootDir": ".",
         "paths": {
-            "@public/*": ["./public/*"]
+            "@public/*": ["../public/*"],
+            "@assets/*": ["./assets/*"]
         }
     },
     "include": ["**/*.ts"]
