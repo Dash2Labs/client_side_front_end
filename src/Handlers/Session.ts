@@ -79,12 +79,12 @@ export default class Session {
      * @throws {ChatSessionError} if the question is invalid
      * @returns {Message} the response message from the server
      */
-    public sendChat(question: ChatObject): Message {
+    public async sendChat(question: ChatObject): Promise<Message> {
         if (question.question.length === 0 || getSizeInBytes(question) > constants.maxLength) {
             throw new ChatSessionError("Invalid Question Length");
         }
         question.question = xss(question.question);
-        return this._chat.sendQuestion(question);
+        return await this._chat.sendQuestion(question);
     }
 
     /**

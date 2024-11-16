@@ -3,6 +3,7 @@ import ChatBot from "react-chatbotify";
 import SessionHandler from './Handlers/Session.ts';
 import { Message } from './Models/Message.ts';
 import Footer from './Components/Footer.tsx';
+import { ChatObject } from "./Handlers/Chat.ts";
 
 type ChatBoftifyProps = {
     session: SessionHandler
@@ -16,11 +17,15 @@ const ChatBotify = (props: ChatBoftifyProps) => {
             path: "loop"
         },
         loop: {
-            message: (params: any) => { // eslint-disable-line
+            message: async (params: any) => { // eslint-disable-line
                 let response: Message;
+                let question: ChatObject = {
+                    question: params.userInput,
+                };
                 try {
-                    response = session.sendChat(params.UserInput);
-                } catch {
+                    response = await session.sendChat(question);
+                } catch (error) {
+                    console.error("Error sending chat: ", error);
                     response = {
                         speaker: "ChatBot",
                         message: "Sorry, I am unable to process your request at this time.",

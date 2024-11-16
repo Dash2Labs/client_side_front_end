@@ -34,7 +34,7 @@ class Chat {
     * @returns {Message} - The response message from the backend API.
     * @throws {ChatSessionError} - Throws an error if the request fails or the response status is not 200.
     */
-    public sendQuestion(question: ChatObject): Message {
+    public async sendQuestion(question: ChatObject): Promise<Message> {
         const url: string = "/api/chat";
         let response: any;  // eslint-disable-line
         this._communicator.postRequest(question, url, {}).then((res) => {
