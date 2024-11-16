@@ -31,8 +31,6 @@ class Communicator {
         this._defaultHeaders = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Connection": "keep-alive",
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Upgrade-Insecure-Requests": "1",
             "dash2labs-user-id": user_id,

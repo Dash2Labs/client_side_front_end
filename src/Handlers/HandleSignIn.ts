@@ -1,6 +1,5 @@
 import { EventEmitter } from "events";
 import Session from "./Session.ts";
-import SessionManager from "../Managers/Session.ts";
 import xss from "xss";
 import { constants } from "../constants.js";
 /**
@@ -35,7 +34,6 @@ class HandleSignIn extends EventEmitter {
                 this._session = new Session(this._session_id);
                 if (this._session) {
                     this._session_id = this._session.session_id;
-                    SessionManager.addSession(this._session);
                     this._setSessionCookie(this._session_id);
                 }
         }
@@ -51,7 +49,6 @@ class HandleSignIn extends EventEmitter {
      */
     public signOut() {
         if (this._session) {
-            SessionManager.removeSession(this._session_id);
             this._removeSessionCookie(this._session_id);
             this._session = undefined;
             this._session_id = "";  

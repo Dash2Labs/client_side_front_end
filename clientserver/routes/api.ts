@@ -29,7 +29,7 @@ const api = express.Router();
 const dash2labs_user_id = "dash2labs-user-id";
 const dash2labs_session_id = "dash2labs-session-id";
 
-api.post('/api/chat', (req, res) => {
+api.post('/chat', (req, res) => {
     if (getSizeInBytes(req) > constants.maxLength) {
         res.status(400).send('Question too long');
         // TODO: Add logging here
@@ -61,7 +61,7 @@ api.post('/api/chat', (req, res) => {
     });
 });
 
-api.post('/api/feedback', (req, res) => {
+api.post('/feedback', (req, res) => {
     if (getSizeInBytes(req) > constants.maxLength) {
         res.status(400).send('Feedback too long');
         // TODO: Add logging here
@@ -94,7 +94,7 @@ api.post('/api/feedback', (req, res) => {
     });
 });
 
-api.get('/api/history', (req, res) => {
+api.get('/history', (req, res) => {
     if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
         res.status(400).send('Invalid characters in history request');
         // TODO: Add logging here
@@ -115,7 +115,7 @@ api.get('/api/history', (req, res) => {
     });
 });
 
-api.get('/api/settings', (req, res) => {
+api.get('/settings', (req, res) => {
     if (JSON.stringify(req).length !== xss(JSON.stringify(req)).length) {
         res.status(400).send('Invalid characters in settings request');
         // TODO: Add logging here
@@ -136,7 +136,7 @@ api.get('/api/settings', (req, res) => {
     });
 });
 
-api.post('/api/settings', (req, res) => {
+api.post('/settings', (req, res) => {
     if (getSizeInBytes(req) > constants.maxLength) {
         res.status(400).send('Settings too long');
         // TODO: Add logging here
