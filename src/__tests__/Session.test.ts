@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { v4 as uuiv4 } from 'uuid';
+import { expect, jest } from '@jest/globals';
 import Session from '../Handlers/Session.ts';
 import Chat, { ChatObject } from '../Handlers/Chat.ts';
 import Feedback, { FeedbackObject } from '../Handlers/Feedback.ts';

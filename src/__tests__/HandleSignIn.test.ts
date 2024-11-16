@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { jest, expect } from '@jest/globals';
 import Session from '../Handlers/Session.ts';
 import SessionManager from '../Managers/Session.ts';
 import HandleSignIn from '../Handlers/HandleSignIn.ts';
@@ -21,7 +22,7 @@ describe('HandleSignIn', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         handleSignIn = new HandleSignIn(); 
-        handleSignIn.emit = jest.fn();
+        handleSignIn.emit = jest.fn() as unknown as <K>(eventName: string | symbol, ...args: any[]) => boolean;
         SessionManager.ManageSessions();         
     });
 
@@ -70,7 +71,7 @@ describe('HandleSignInWhenSignedIn', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         handleSignIn = new HandleSignIn(); 
-        handleSignIn.emit = jest.fn();
+        handleSignIn.emit = jest.fn() as unknown as <K>(eventName: string | symbol, ...args: any[]) => boolean;
         handleSignIn['_session'] = new Session();
         handleSignIn['_session_id'] = 'test-session-id';
         SessionManager.ManageSessions();         

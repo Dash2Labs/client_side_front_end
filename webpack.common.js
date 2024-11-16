@@ -26,6 +26,8 @@ let __HOME_IMAGE_3__;
 let __CUSTOMER_SETTINGS__;
 let __MAX_LENGTH__;
 let __EXPIRATION_TIME__;
+let __USEAUTH__;
+
 const loadCustomerSettings = function () {
     // Read customer settings from a json file
     const file = 'customerSettings.json';
@@ -42,11 +44,13 @@ const setupClientServer = function () {
         case 'development':
             __SERVER__ = "http://localhost:3000";
             __REDIRECT_URI__ = `${__SERVER__}/redirect.html`;
+            process.env.__DEBUG__ = true;
             console.log("development", __SERVER__, __REDIRECT_URI__)
             break;
         case 'production':
             __SERVER__ = config.serverUri;
             __REDIRECT_URI__ = `${config.clientUri}/redirect.html`;
+            process.env.__DEBUG__ = false;
             console.log("production", __SERVER__, __REDIRECT_URI__)
             break;
         default:
@@ -55,17 +59,20 @@ const setupClientServer = function () {
             console.log("production", __SERVER__, __REDIRECT_URI__)
             break;
     }
-    __APP_AUTHORITY__ = config.appAuthority;
-    __APP_ID__ = config.appId;
-    __PRODUCT_TITLE__ = config.productTitle;
-    __CLIENT_SERVER_IP__ = config.clientServerIp;
-    __CUSTOMER_LOGO__ = config.customerLogo;
-    __HOME_IMAGE_1__ = config.homeImage1;
-    __HOME_IMAGE_2__ = config.homeImage2;
-    __HOME_IMAGE_3__ = config.homeImage3;
-    __CUSTOMER_SETTINGS__ = config.customerSettings;
-    __MAX_LENGTH__ = config.maxLength;
-    __EXPIRATION_TIME__ = config.expirationTime;
+    process.env.__SERVER__ = __SERVER__;
+    process.env.__REDIRECT_URI__ = __REDIRECT_URI__;
+    process.env.__APP_AUTHORITY__ = config.appAuthority;
+    process.env.__APP_ID__ = config.appId;
+    process.env.__PRODUCT_TITLE__ = config.productTitle;
+    process.env.__CLIENT_SERVER_IP__ = config.clientServerIp;
+    process.env.__CUSTOMER_LOGO__ = config.customerLogo;
+    process.env.__HOME_IMAGE_1__ = config.homeImage1;
+    process.env.__HOME_IMAGE_2__ = config.homeImage2;
+    process.env.__HOME_IMAGE_3__ = config.homeImage3;
+    process.env.__CUSTOMER_SETTINGS__ = config.customerSettings;
+    process.env.__MAX_LENGTH__ = config.maxLength;
+    process.env.__EXPIRATION_TIME__ = config.expirationTime;
+    process.env.__USEAUTH__ = config.useAuth;
 };
 
 setupClientServer();
@@ -115,7 +122,9 @@ const common = function (env, argv) {
             "__HOME_IMAGE_3__": JSON.stringify(__HOME_IMAGE_3__),
             "__CUSTOMER_SETTINGS__": JSON.stringify(__CUSTOMER_SETTINGS__),
             "__MAX_LENGTH__":JSON.stringify(__MAX_LENGTH__),
-            "__EXPIRATION_TIME__": JSON.stringify(__EXPIRATION_TIME__)
+            "__EXPIRATION_TIME__": JSON.stringify(__EXPIRATION_TIME__),
+            "__USEAUTH__": JSON.stringify(__USEAUTH__),
+            "__DEBUG__": JSON.stringify(process.env.__DEBUG__)
         }),
         new FileManagerPlugin(
             {

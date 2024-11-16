@@ -10,15 +10,17 @@
     "skipLibCheck": true,
     "allowJs": false,
     "declaration": true,
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": true,
     "declarationMap": false,
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "es2020",
       "dom"
     ],
     "noImplicitThis": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
+    "strictNullChecks": true
   },
   "exclude": [
     "node_modules",
@@ -32,5 +34,6 @@
   "include": [
     "clientserver",
     "client"
-  ]
+  ],
+  
 }

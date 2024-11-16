@@ -5,7 +5,8 @@
         "sourceMap": true,
         "declarationMap": true,
         "declaration": true,
-        "emitDeclarationOnly": false,
+        "emitDeclarationOnly": true,
+        "allowImportingTsExtensions": true,
         "noEmit": false,
         "lib": [
             "es2023"
@@ -15,7 +16,7 @@
         "rootDir": ".",
         "paths": {
             "@public/*": ["../public/*"],
-            "@assets/*": ["./assets/*"],
+            "@assets/*": ["./assets/*"]
         }
     },
     "include": ["**/*.ts"]

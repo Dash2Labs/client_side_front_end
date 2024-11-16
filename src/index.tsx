@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import App from './app.tsx';
 import { constants } from './constants.js';
-import { EventType, AccountInfo } from '@azure/msal-browser';
+import { EventType, AccountInfo, EventMessage } from '@azure/msal-browser';
 import { msalInstance } from './Authorization/MsalInstance.ts';
 import React from 'react'; // eslint-disable-line
 
@@ -12,7 +12,7 @@ if (constants.useauth === true) {
         msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
     };
     msalInstance.enableAccountStorageEvents();
-    msalInstance.addEventCallback((event) => {
+    msalInstance.addEventCallback((event: EventMessage) => {
         if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
             const account = event.payload;
             msalInstance.setActiveAccount(account as AccountInfo);

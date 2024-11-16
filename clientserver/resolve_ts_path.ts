@@ -15,8 +15,9 @@ import { path, fs, _dirname_ } from './common_imports.js';
  */
 export function resolvePath(inputPath: string, compiledPath: string = "../clientserver/"): string {
   const __dirname = path.resolve(_dirname_(import.meta.url), compiledPath);
-  const tsconfig_filename = path.resolve(__dirname, "tsconfig.server.json");
-  const tsConfig = JSON.parse(fs.readFileSync(tsconfig_filename, "utf8"));
+  const tsconfig_filename = path.join(__dirname, "tsconfig.server.json");
+  const file = fs.readFileSync(tsconfig_filename, "utf8");
+  const tsConfig = JSON.parse(file);
   // create the alias search pattern from the inputPath
   const aliasPattern = new RegExp(`^${inputPath.split("/")[0]}`);
   // find the alias in the tsconfig paths

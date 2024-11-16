@@ -12,5 +12,6 @@
     "chatIcon": "./assets/chatIcon.png",
     "maxLength": 1000,
     "expirationTime": 300000,
+    "useAuth": false,
     "customerSettings": {}
 }
