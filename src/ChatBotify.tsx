@@ -2,6 +2,7 @@ import React from "react"; // eslint-disable-line
 import ChatBot from "react-chatbotify";
 import SessionHandler from './Handlers/Session.ts';
 import { Message } from './Models/Message.ts';
+import Footer from './Components/Footer.tsx';
 
 type ChatBoftifyProps = {
     session: SessionHandler
@@ -37,7 +38,7 @@ const ChatBotify = (props: ChatBoftifyProps) => {
             }
         }
     };
-    return <ChatBot flow={flow}/>;
+    return <ChatBot flow={flow} settings={{header: {"title": "HIPPA for Humans" }, footer: {text: <Footer logo="./assets/botIcon.png" />}}}/>;
 };
 
 export default ChatBotify;
