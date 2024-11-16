@@ -26,9 +26,17 @@ const handleResponse = (res: express.Response, response: axios.AxiosResponse, co
     }
 };
 
-const cleanHeader = (req: express.Request, str: string): string => {
-    const header: string = Array.isArray(req.headers[str]) ? req.headers[str][0] : req.headers[str] || "";
-    return xss(header);
+const addCommonHeaders = (req: express.Request) => {
+    const dash2labs_user_id = "dash2labs-user-id";
+    const dash2labs_session_id = "dash2labs-session-id";
+    const headers = defaultHeaders;
+    const correlationId = uuiv4();
+    const userIdHeader = req.headers[dash2labs_user_id];
+    const userId: string = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader || "";
+    const sessionIdHeader = req.headers[dash2labs_session_id];
+    const sessionId: string = Array.isArray(sessionIdHeader) ? sessionIdHeader[0] : sessionIdHeader || "";
+    const options = { headers: { ...headers, "correlation-id": correlationId, "dash2labs-user-id": userId, "dash2labs-session-id": sessionId } };
+    return options;
 };
 
 const checkSession = (res: express.Response, sessionId: string) => {
@@ -49,7 +57,7 @@ export { express,
          defaultHeaders,
          uuiv4,
          handleResponse,
-         cleanHeader,
+         addCommonHeaders,
          checkSession,
          SessionManager,
          xss };
