@@ -1,5 +1,6 @@
-import { Buffer } from 'buffer';
+function getSizeInBytes(obj: any): number {
+    const str = JSON.stringify(obj);
+    return new Blob([str]).size;
+}
 
-export const getSizeInBytes = (object: object): number => {
-    return Buffer.byteLength(JSON.stringify(object), 'utf8');
-};
+export { getSizeInBytes };
