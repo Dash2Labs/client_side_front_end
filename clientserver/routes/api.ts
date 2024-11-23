@@ -27,12 +27,11 @@ interface FeedbackObject {
 const ax = axios.default;
 const api = express.Router();
 
-
 api.post('*', sizeLimit);
 api.use(xssCheck);
 
 api.post('/chat', (req, res) => {
-    if (!req.body.question) {
+    if (req.body && !req.body.question) {
         res.status(400).send('No question provided');
         // TODO: Add logging here
     };
