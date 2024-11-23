@@ -10,6 +10,7 @@
 import Communicator from './Communicator.ts';
 import { Message } from '../Models/Message.ts';
 import { ChatSessionError } from './Errors/SessionError.ts';
+import { Axios, AxiosResponse } from 'axios';
 
 export interface ChatObject {
     question: string;
@@ -36,18 +37,19 @@ class Chat {
     */
     public async sendQuestion(question: ChatObject): Promise<Message> {
         const url: string = "/api/chat";
-        let response: any;  // eslint-disable-line
-        this._communicator.postRequest(question, url, {}).then((res) => {
-                response = res;
+    
+        let response = this._communicator.postRequest(question, url, {}).then((res) => {
+            if (res && res.status === 200) {
+                return res.data.message as Message;
+            }else {
+                throw new ChatSessionError("status " + (res !== undefined ? res.status : "missing response"));
+            }
             }).catch((error) => {
                 console.error("Error sending question: ", error);
                 throw new ChatSessionError("Error sending question: " + error.message);
             });
-            if (response.status === 200) {
-                return response.data.message as Message;
-            }else {
-                throw new ChatSessionError("Error sending question: status " + response.status);
-            }
+        return response;
+            
         }
 
     [Symbol.dispose](): void {

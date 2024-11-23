@@ -13,5 +13,8 @@
  * @returns {number} the size of the object in bytes
  */
 export const getSizeInBytes = (object: object): number => {
+    if (object === null || object === undefined) {
+        return 0;
+    }
     return Buffer.byteLength(JSON.stringify(object), 'utf8');
 };
