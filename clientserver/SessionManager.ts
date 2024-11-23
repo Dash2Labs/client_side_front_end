@@ -1,4 +1,4 @@
-import { constants } from "./common_imports.js";
+import { constants } from "./common_imports.ts";
 
 export class SessionManager {
     private static _sessions: Map<string, number> = new Map<string, number>();

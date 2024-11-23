@@ -8,7 +8,7 @@
     "build": "npm run build:clienttypes && npm run build:server && npm run build:js",
     "build:server": "tsc -p ./clientserver/tsconfig.server.json && npm run copy-js",
     "build:clienttypes": "tsc -p src/tsconfig.client.json",
-    "build:js": "webpack --config webpack.dev.js",
+    "build:js": "webpack --config webpack.dev.mjs",
     "copy-js": "copyfiles -u 1 'clientserver/**/*.js' dist/server",
     "encrypt": "./node_modules/.bin/dotenvx encrypt -f clientserver/.env.local && ./node_modules/.bin/dotenvx encrypt -f clientserver/.env.production && ./node_modules/.bin/dotenvx encrypt -f .env",
     "lstart": "npm run build && npm run encrypt && dotenvx run -f clientserver/.env.local -- nodemon --watch clientserver --exec npx tsx clientserver/index.ts",
@@ -37,7 +37,6 @@
     "react": "latest",
     "react-chatbotify": "^2.0.0-beta.24",
     "react-dom": "latest",
-    "react-scripts": "^5.0.1",
     "uuid": "^11.0.3",
     "xss": "^1.0.15"
   },
@@ -58,6 +57,7 @@
     "@types/react-dom": "latest",
     "@types/supertest": "^6.0.2",
     "@types/testing-library__react": "^10.2.0",
+    "@types/webpack-node-externals": "^3.0.4",
     "babel-jest": "^29.7.0",
     "copyfiles": "^2.4.1",
     "css-loader": "^7.1.2",
@@ -74,11 +74,13 @@
     "nodemon": "^3.1.7",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
+    "ts-loader": "^9.5.1",
     "tslib": "^2.8.1",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.14.0",
     "webpack": "^5.96.1",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
   }
 }

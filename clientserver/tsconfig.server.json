@@ -1,5 +1,5 @@
 {
-    "extends": "../tsconfig.custom.base.json",
+    "extends": "../tsconfig.json",
     "compilerOptions": {
         "baseUrl": ".",
         "sourceMap": true,
@@ -12,7 +12,7 @@
             "es2023"
         ],
         "composite": true,
-        "outDir": "../dist/server",
+        "outDir": "../dist",
         "rootDir": ".",
         "paths": {
             "@public/*": ["../public/*"],

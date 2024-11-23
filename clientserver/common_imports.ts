@@ -1,4 +1,4 @@
-import { resolvePath } from './resolve_ts_path.js';
+import { resolvePath } from './resolve_ts_path.ts';
 import { fileURLToPath } from 'url';
 import * as express from 'express';
 import * as path from 'path';
@@ -6,8 +6,8 @@ import * as fs from 'node:fs';
 import * as axios from 'axios';
 import { constants } from './constants.js';
 import { v4 as uuiv4 } from 'uuid';
-import er from './errors.js';
-import { SessionManager } from './SessionManager.js';
+import er from './errors.ts';
+import { SessionManager } from './SessionManager.ts';
 import xss from 'xss';
 
 const _filename_ = (import_meta_url: string) => fileURLToPath(import_meta_url);

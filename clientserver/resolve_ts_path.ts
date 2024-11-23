@@ -6,7 +6,7 @@
  * 
  * @author Dustin Morris
  */
-import { path, fs, _dirname_ } from './common_imports.js';
+import { path, fs, _dirname_ } from './common_imports.ts';
 
 /**
  * Resolves the given path based on the typescript configuration paths property.

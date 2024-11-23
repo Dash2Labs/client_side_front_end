@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "baseUrl": "./ClientServer",
+    "baseUrl": "./clientserver",
     "inlineSources": true,
     "sourceMap": true,
     "esModuleInterop": true,
@@ -29,7 +29,8 @@
     "**/*.bundle.js",
     "**/client/constants.*",
     "**/client/constant.*",
-    "/later/*"
+    "/later/*",
+    "**/dist"
   ],
   "include": [
     "clientserver",

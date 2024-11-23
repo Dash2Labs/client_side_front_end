@@ -7,9 +7,9 @@
  * @author Dustin Morris
  */
 
-import { express, axios, constants, defaultHeaders, uuiv4, handleResponse, checkSession, addCommonHeaders } from '../common_imports.js';
-import { sizeLimit, xssCheck } from '../middleware/middleware.js';
-import er from '../errors.js';
+import { express, axios, constants, handleResponse, checkSession, addCommonHeaders } from '../common_imports.ts';
+import { sizeLimit, xssCheck } from '../middleware/middleware.ts';
+import er from '../errors.ts';
 
 
 interface ChatObject {

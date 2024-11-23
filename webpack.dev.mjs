@@ -1,8 +1,8 @@
 import { merge } from 'webpack-merge';
-import common from './webpack.common.js';
+import { common, backend } from './webpack.common.mjs';
 
 const dev = function (env, argv) {
-    return merge(common(env, argv), {
+    return merge(common(env, argv),{
         mode: "development",
         devtool: "inline-source-map",
         devServer: {

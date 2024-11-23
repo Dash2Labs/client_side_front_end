@@ -1,7 +1,7 @@
-import { getSizeInBytes } from '../Utilities/Utility.js';
+import { getSizeInBytes } from '../Utilities/Utility.ts';
 import xss from 'xss';
 import crypto from 'crypto';
-import { express, constants, defaultHeaders, uuiv4 } from '../common_imports.js';
+import { express, constants } from '../common_imports.ts';
 
 interface SizeLimitRequest extends express.Request {
     body: any;
