@@ -16,7 +16,8 @@
         "rootDir": ".",
         "paths": {
             "@public/*": ["../public/*"],
-            "@assets/*": ["./assets/*"]
+            "@assets/*": ["./assets/*"],
+            "@certs/*": ["./build/*"],
         }
     },
     "include": ["**/*.ts"]

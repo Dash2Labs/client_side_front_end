@@ -7,9 +7,11 @@
  * @author Dustin Morris
  */
 import express from 'express';
+import http from 'http';
+import https from 'https';
 import { resolvePath, _dirname_ } from './common_imports.ts';
 import * as dotx from '@dotenvx/dotenvx';
-dotx.config();
+dotx.config({path: '@certs/.env'});
 import logger from 'morgan';
 import compression from 'compression';
 import bodyParser from 'body-parser';
@@ -27,6 +29,12 @@ if (process.env.NODE_ENV === 'production') {
 const APP = express();
 const PORT = process.env.PORT || 3000;
 
+APP.use((req, res, next) => {
+    if (req.secure) {
+        next();
+    } else {
+        res.redirect(301, `https://${req.headers.host}${req.url}`);
+    }});
 APP.use(bodyParser.json());
 APP.use('/', root);
 APP.use('/api', api);
@@ -36,6 +44,17 @@ APP.use(express.json());
 APP.use(logger('tiny'));
 APP.use(compression());
 APP.use(serveStatic([resolvePath('@public'), resolvePath('@assets')]));
-APP.listen(PORT, () => {
+
+const SERVER = http.createServer(APP);
+const HTTPS_SERVER = https.createServer({
+    key: resolvePath('@certs/key.pem'),
+    cert: resolvePath('@certs/cert.pem')
+}, APP);
+
+SERVER.listen(PORT, () => {
     console.log(`Server is running on ${process.env.URL}:${PORT}`);
+});
+
+HTTPS_SERVER.listen(443, () => {
+    console.log(`HTTPS Server is running on ${process.env.URL}:443`);
 });
