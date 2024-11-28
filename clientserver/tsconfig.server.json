@@ -5,9 +5,8 @@
         "sourceMap": true,
         "declarationMap": true,
         "declaration": true,
-        "emitDeclarationOnly": true,
-        "allowImportingTsExtensions": true,
         "noEmit": false,
+        "declarationDir": "../types",
         "lib": [
             "es2023"
         ],

@@ -6,16 +6,17 @@
  * 
  * @author Dustin Morris
  */
-import { path, fs, _dirname_ } from './common_imports.ts';
+import { path, fs, _dirname_ } from './common_imports.js';
 
 /**
  * Resolves the given path based on the typescript configuration paths property.
  * @param {string} inputPath - The path to transform.
  * @returns {string} - The transformed path.
  */
-export function resolvePath(inputPath: string, compiledPath: string = "../clientserver/"): string {
-  const __dirname = path.resolve(_dirname_(import.meta.url), compiledPath);
-  const tsconfig_filename = path.join(__dirname, "tsconfig.server.json");
+export function resolvePath(inputPath: string): string {
+  const dev = process.env.NODE_ENV === "development";
+  const __dirname = path.resolve(_dirname_(import.meta.url), dev ? "../clientserver" : "../dist");
+  const tsconfig_filename = path.join(__dirname, "tsconfig.server.prod.json");
   const file = fs.readFileSync(tsconfig_filename, "utf8");
   const tsConfig = JSON.parse(file);
   // create the alias search pattern from the inputPath

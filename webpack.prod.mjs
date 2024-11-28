@@ -1,5 +1,5 @@
 import { merge } from 'webpack-merge';
-import common from './webpack.common.js';
+import { common } from './webpack.common.mjs';
 import CompressionPlugin from 'compression-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 

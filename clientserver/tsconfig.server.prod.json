@@ -1,0 +1,29 @@
+{
+    "extends:": "./tsconfig.server.json",
+    "compilerOptions": {
+        "jsx": "preserve",
+        "baseUrl": ".",
+        "module": "NodeNext",
+        "declarationDir": "../types",
+        "target": "ESNext",
+        "moduleResolution": "nodenext",
+        "sourceMap": false,
+        "declarationMap": false,
+        "declaration": true,
+        "emitDeclarationOnly": false,
+        "noEmit": false,
+        "esModuleInterop": true,
+        "lib": [
+            "es2023"
+        ],
+        "composite": true,
+        "outDir": "../dist",
+        "rootDir": ".",
+        "paths": {
+            "@public/*": ["../public/*"],
+            "@assets/*": ["./assets/*"],
+            "@certs/*": ["../build/*"]
+        }
+    },
+    "exclude": ["node_modules", "dist", "build", "public", "__tests__", "__mocks__"]
+}

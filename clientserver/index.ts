@@ -9,19 +9,19 @@
 import express from 'express';
 import http from 'http';
 import https from 'https';
-import { resolvePath, _dirname_ } from './common_imports.ts';
-import * as dotx from '@dotenvx/dotenvx';
-dotx.config({path: '@certs/.env'});
+import { resolvePath, _dirname_ } from './common_imports.js';
 import logger from 'morgan';
 import compression from 'compression';
 import bodyParser from 'body-parser';
-import serveStatic from './serve_static.ts';
-import session from './routes/session.ts';
-import api from './routes/api.ts';
-import root from './routes/root.ts';
+import serveStatic from './serve_static.js';
+import session from './routes/session.js';
+import api from './routes/api.js';
+import root from './routes/root.js';
 
+let dev = true;
 if (process.env.NODE_ENV === 'production') {
     console.log("Client Server is running in PRODUCTION mode");
+    dev = false;
 } else {
     console.log("Client Server is running in DEVELOPMENT mode");
 };
@@ -46,15 +46,17 @@ APP.use(compression());
 APP.use(serveStatic([resolvePath('@public'), resolvePath('@assets')]));
 
 const SERVER = http.createServer(APP);
+console.log(resolvePath('@certs/key.pem'));
+console.log(resolvePath('@certs/cert.pem'));
 const HTTPS_SERVER = https.createServer({
-    key: resolvePath('@certs/key.pem'),
-    cert: resolvePath('@certs/cert.pem')
+    key: resolvePath('@certs/chat_private.key'),
+    cert: resolvePath('@certs/chat_cert.pm')
 }, APP);
 
 SERVER.listen(PORT, () => {
-    console.log(`Server is running on ${process.env.URL}:${PORT}`);
+    console.log(`Server is running on ${process.env.URL}:${PORT} in ${process.env.NODE_ENV} mode`);
 });
 
 HTTPS_SERVER.listen(443, () => {
-    console.log(`HTTPS Server is running on ${process.env.URL}:443`);
+    console.log(`HTTPS Server is running on ${process.env.URL}:443 in ${process.env.NODE_ENV} mode`);
 });

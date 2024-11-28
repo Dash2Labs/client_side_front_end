@@ -6,13 +6,17 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
     "build": "npm run build:clienttypes && npm run build:server && npm run build:js",
-    "build:server": "tsc -p ./clientserver/tsconfig.server.json && npm run copy-js",
+    "build:server": "tsc -p ./clientserver/tsconfig.server.json && npm run copy-js && npm run copy-json",
     "build:clienttypes": "tsc -p src/tsconfig.client.json",
     "build:js": "webpack --config webpack.dev.mjs",
-    "copy-js": "copyfiles -u 1 'clientserver/**/*.js' dist/server",
+    "build:prod": "npm run build:clienttypes && npm run build:server:prod && npm run build:js:prod",
+    "build:server:prod": "tsc -p ./clientserver/tsconfig.server.prod.json && npm run copy-js && npm run copy-json",
+    "build:js:prod": "webpack --config webpack.prod.mjs",
+    "copy-js": "copyfiles -u 1 'clientserver/**/*.js' dist",
+    "copy-json": "copyfiles -u 1 'clientserver/**/*.json' dist",
     "encrypt": "./node_modules/.bin/dotenvx encrypt -f clientserver/.env.local && ./node_modules/.bin/dotenvx encrypt -f clientserver/.env.production && ./node_modules/.bin/dotenvx encrypt -f .env",
     "lstart": "npm run build && npm run encrypt && dotenvx run -f clientserver/.env.local -- nodemon --watch clientserver --exec npx tsx clientserver/index.ts",
-    "start": "npm run build && npm run encrypt && dotenvx run -f clientserver/.env.production -- node clientserver/index.js"
+    "start": "dotenvx run -f ./dist/.env.production -- node dist/index.js"
   },
   "author": "Dustin Morris",
   "license": "ISC",
@@ -59,6 +63,7 @@
     "@types/testing-library__react": "^10.2.0",
     "@types/webpack-node-externals": "^3.0.4",
     "babel-jest": "^29.7.0",
+    "compression-webpack-plugin": "^11.1.0",
     "copyfiles": "^2.4.1",
     "css-loader": "^7.1.2",
     "esbuild-loader": "^4.2.2",
@@ -73,6 +78,7 @@
     "mini-css-extract-plugin": "^2.9.2",
     "nodemon": "^3.1.7",
     "supertest": "^7.0.0",
+    "terser-webpack-plugin": "^5.3.10",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.1",
     "tslib": "^2.8.1",
@@ -81,6 +87,7 @@
     "typescript-eslint": "^8.14.0",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4",
+    "webpack-merge": "^6.0.1",
     "webpack-node-externals": "^3.0.0"
   }
 }

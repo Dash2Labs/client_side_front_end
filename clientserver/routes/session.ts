@@ -9,7 +9,7 @@
 
 import { express,
          SessionManager,
-         xss } from '../common_imports.ts';
+         xss } from '../common_imports.js';
 
 const session = express.Router();
 session.route('/active/:session_id')

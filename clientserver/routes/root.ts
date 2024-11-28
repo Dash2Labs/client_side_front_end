@@ -6,7 +6,7 @@
  * 
  * @author Dustin Morris
  */
-import { express, resolvePath } from '../common_imports.ts';
+import { express, resolvePath } from '../common_imports.js';
 
 const root = express.Router();
 root.get('/', (req, res) => {
