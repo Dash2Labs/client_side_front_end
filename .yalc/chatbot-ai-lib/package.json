@@ -1,6 +1,6 @@
 {
   "name": "chatbot-ai-lib",
-  "version": "1.1.9",
+  "version": "1.1.7a",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
@@ -52,5 +52,6 @@
       "optional": false
     }
   },
-  "yalcSig": "3c931b8f1c47ffd85738f3c9de50eda3"
+  "dependencies": {},
+  "yalcSig": "6534fc41dac9319f94062d901ddb65b4"
 }

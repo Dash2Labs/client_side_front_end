@@ -150,23 +150,28 @@ export default class Session {
             .then((chats) => {
                 const chat_history = chats.chats.map((chat) => {
                     return {
-                        type: chat.speaker == "bot" ? "ai" : "user",
-                        text: chat.message,
-                        timestamp: chat.timestamp,
-                        ratingEnabled: constants.ratingsEnabled,
-                        textFeedbackEnabled: constants.textFeedbackEnabled,
-                        isProfileImageRequired: constants.requireProfileImage,
-                        feedback: chat.feedback,
-                        rating: chat.rating,
-                        chatId: chat.chat_id,
-                        sessionId: chat.session_id,
-                        onStarClick: () => {},
-                        onTextFeedbackSubmit: () => {},
-                        userName: "",
-                        userProfileImage: "",
+                        // user details
                         aiName: "",
                         aiProfileImage: "",
-                        chats: [],
+                        isProfileImageRequired: constants.requireProfileImage,
+                        userName: "",
+                        userProfileImage: "",
+
+                        //Basic details
+                        chatId: chat.chat_id,
+                        feedback: chat.feedback,
+                        onStarClick: () => {},
+                        onTextFeedbackSubmit: () => {},
+                        rating: chat.rating,
+                        ratingEnabled: constants.ratingsEnabled,
+                        sender: chat.sender,
+                        sessionId: chat.session_id,
+                        text: chat.message,
+                        textFeedbackEnabled: constants.textFeedbackEnabled,
+                        timestamp: chat.timestamp,
+                        type: chat.type,
+
+
                     } as ChatCardProps;
             });
             return chat_history;
@@ -275,8 +280,6 @@ export default class Session {
             this._settings = new Settings(this._communicator);
         }
     }
-
-    
 
     [Symbol.dispose]() {
         if (this._chat) this._chat[Symbol.dispose]();
