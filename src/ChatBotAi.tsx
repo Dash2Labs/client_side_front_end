@@ -76,6 +76,32 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         // handle file upload event
     }
 
+    function handleStarClick()
+    {
+        //handle clicking of star
+    }
+
+    function handleTextfeedbackSubmit()
+    {
+        //handle feedback submissions
+    }
+
+    function handleHistoryScroll()
+    {
+        //handle history appearing when scrolling
+    }
+
+    function handleHistoryScrollTop()
+    {
+        // handle when at the top of the scroll, newest info
+    }
+
+    function handleHistoryScrollBottom()
+    {
+        // HANDLE HISTORY when there is no more 
+    }
+
+
     function updateSessionId (sessionId: string) {
         setSessionId(sessionId);
         manager.activeSessionId = sessionId;
