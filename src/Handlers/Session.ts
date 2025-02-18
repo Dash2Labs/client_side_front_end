@@ -6,9 +6,10 @@
  * @author Dustin Morris
  */
 import { v4 as uuidv4 } from 'uuid';
+import { ChatCardProps } from 'chatbot-ai-lib';
 import Chat, { ChatObject } from './Chat.ts';
 import Feedback, { FeedbackObject } from './Feedback.ts';
-import History, { HistoryObject } from './History.ts';
+import ChatHistory, { ChatHistoryObject } from './ChatHistory.ts';
 import Settings, { SettingsObject } from './Settings.ts';
 import User from '../Models/User.ts';
 import { constants } from '../constants.js';
@@ -17,6 +18,7 @@ import SessionError, { ChatSessionError, SettingsSessionError }  from './Errors/
 import Communicator from './Communicator.ts';
 import { getSizeInBytes } from '../Utilities/Utility.ts';
 import { Message } from '../Models/Message.ts';
+import SessionManager from './SessionManager.ts';
 import xss from 'xss';
 
 /**
@@ -25,7 +27,7 @@ import xss from 'xss';
  * This class is the interface between the user interface and the backend API.
  * @property {Chat} _chat - An instance of the Chat class used to handle chat operations.
  * @property {Feedback} _feedback - An instance of the Feedback class used to handle feedback operations.
- * @property {History} _history - An instance of the History class used to handle history operations.
+ * @property {ChatHistory} _chat_history - An instance of the History class used to handle history operations.
  * @property {Settings} _settings - An instance of the Settings class used to handle settings operations.
  * @property {User} _user - An instance of the User class used to handle user authentication.
  * @property {Communicator} _communicator - An instance of the Communicator class used to send requests.
@@ -36,40 +38,68 @@ import xss from 'xss';
 export default class Session {
     private _chat!: Chat; // this is the chat handler is resposible for sending and receiving chat messages
     private _feedback!: Feedback;  // this is the feedback handler is resposible for sending and receiving feedback
-    private _history!: History; // this is the history handler is resposible for getting the history
+    private _chat_history!: ChatHistory; // this is the history handler is resposible for getting the history
     private _settings!: Settings; // this is the settings handler is resposible for getting and setting the settings
     private _user!: User; // this is the user object that is used to authenticate the user
     private _communicator!: Communicator; // this is the communicator object that is used to send and receive messages from the server
     public createdAt!: Date; // this is the date the session was created
     public expiresAt!: Date; // this is the date the session will expire
     public session_id!: string; // this is the session id that is used to identify the session
+    public manager!: SessionManager; // this is the session manager that is used to manage the active sessions
 
     /**
     * @description This is the constructor for the Session class
     * @param {string?} session_id
     * @calls _initialize to initialize the session
     */
-    constructor(session_id?: string) {
-        try {
-            this._initialize(session_id);
-            this.createdAt = new Date();
-            this.expiresAt = new Date(this.createdAt.getTime() + constants.expirationTime);
+    constructor(manager: SessionManager, session_id?: string) {
+        this.manager = manager;
+        if (session_id) {
+            manager.validActiveSession(session_id)
+                .then((valid) => {
+                    if (!valid) {
+                        try {
+                            this._initialize(session_id);
+                            this.createdAt = new Date();
+                            this.expiresAt = new Date(this.createdAt.getTime() + constants.expirationTime);
+                        }
+                        catch (error) {
+                            if (constants.debug) {
+                                console.error(error);
+                            }
+                            else {
+                                if (error instanceof AuthorizationError) {
+                                    throw error;
+                                }
+                                if (error instanceof Error) {
+                                    throw new SessionError("Session initialization failed: " + error.message + " " + error.stack);
+                                } else {
+                                    throw new SessionError("Session initialization failed: Unknown error" + error);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        return manager.activeSessions[session_id];
+                    }
+                })
+                .catch((error) => {
+                    if (constants.debug) {
+                        console.error(error);
+                    }
+                    else {
+                        if (error instanceof AuthorizationError) {
+                            throw error;
+                        }
+                        if (error instanceof Error) {
+                            throw new SessionError("Session initialization failed: " + error.message + " " + error.stack);
+                        } else {
+                            throw new SessionError("Session initialization failed: Unknown error" + error);
+                        }
+                    }
+                });
         }
-        catch (error) {
-            if (constants.debug) {
-                console.error(error);
-            }
-            else {
-                if (error instanceof AuthorizationError) {
-                    throw error;
-                }
-                if (error instanceof Error) {
-                    throw new SessionError("Session initialization failed: " + error.message + " " + error.stack);
-                } else {
-                    throw new SessionError("Session initialization failed: Unknown error" + error);
-                }
-            }
-        }
+        
     }
 
     /**
@@ -80,11 +110,11 @@ export default class Session {
      * @returns {Message} the response message from the server
      */
     public async sendChat(question: ChatObject): Promise<Message> {
-        if (question.question.length === 0 || getSizeInBytes(question) > constants.maxLength) {
+        if (question.message.length === 0 || getSizeInBytes(question) > constants.maxLength) {
             throw new ChatSessionError("Invalid Question Length");
         }
-        question.question = xss(question.question);
-        return await this._chat.sendQuestion(question);
+        question.message = xss(question.message);
+        return await this._chat.sendChat(question);
     }
 
     /**
@@ -113,10 +143,37 @@ export default class Session {
     /**
      * @method getHistory
      * @description This is a callback function for the ui to get the history
-     * @returns {HistoryObject} the history of user sessions
+     * @returns {ChatCardProps} the history of user sessions
      */
-    public getHistory(): HistoryObject {
-        return this._history.getHistory();
+    public async getChatHistory(): Promise<ChatCardProps[]> {
+        return this._chat_history.getChatHistory(this.session_id)
+            .then((chats) => {
+                const chat_history = chats.chats.map((chat) => {
+                    return {
+                        type: chat.speaker == "bot" ? "ai" : "user",
+                        text: chat.message,
+                        timestamp: chat.timestamp,
+                        ratingEnabled: constants.ratingsEnabled,
+                        textFeedbackEnabled: constants.textFeedbackEnabled,
+                        isProfileImageRequired: constants.requireProfileImage,
+                        feedback: chat.feedback,
+                        rating: chat.rating,
+                        chatId: chat.chat_id,
+                        sessionId: chat.session_id,
+                        onStarClick: () => {},
+                        onTextFeedbackSubmit: () => {},
+                        userName: "",
+                        userProfileImage: "",
+                        aiName: "",
+                        aiProfileImage: "",
+                        chats: [],
+                    } as ChatCardProps;
+            });
+            return chat_history;
+        }).catch((error) => {
+            console.error("Error getting chat history: ", error);
+            return [];
+        });
     }
 
     /**
@@ -166,7 +223,7 @@ export default class Session {
         if (this._user) {
             if(session_id) {
                 this.session_id = xss(session_id);
-                const isValid = await this._validActiveSession(session_id);
+                const isValid = await this.manager.validActiveSession(session_id);
                 if(!isValid) {
                     this.session_id = uuidv4();  // session id is invalid so we create a new one
                 }
@@ -180,7 +237,7 @@ export default class Session {
         else {
             throw new AuthorizationError("User not authorized");
         }
-        this._addActiveSession();
+        this.manager.addActiveSession(this.session_id);
     }
     
     /** 
@@ -214,45 +271,17 @@ export default class Session {
         else {
             this._chat = new Chat(this._communicator);
             this._feedback = new Feedback(this._communicator);
-            this._history = new History(this._communicator);
+            this._chat_history = new ChatHistory(this._communicator);
             this._settings = new Settings(this._communicator);
         }
     }
 
-    /**
-     * @description This function validates the session id
-     * @param {string} session_id
-     */
-    private async _validActiveSession(session_id: string): Promise<boolean> {
-        const temp_communicator = new Communicator(uuidv4(), "temp_session");
-        temp_communicator.getRequest(`/session/active/${session_id}`, {}).then((res) => {
-            if (res.status !== 200) {
-                return false;
-            }
-        }).catch((error) => {
-            console.error("Error validating session: ", error);
-            return false;
-        });
-        return true;
-    }
-
-    /**
-     * @description This function adds the session to the active sessions
-     */
-    private _addActiveSession() {
-        this._communicator.postRequest({}, `/session/active/${this.session_id}`, {}).then((res) => {
-            if (res.status !== 200) {
-                console.error("Error adding session: ", res.status);
-            }
-        }).catch((error) => {
-            console.error("Error adding session: ", error);
-        });
-    }
+    
 
     [Symbol.dispose]() {
         if (this._chat) this._chat[Symbol.dispose]();
         if (this._feedback) this._feedback[Symbol.dispose]();
-        if (this._history) this._history[Symbol.dispose]();
+        if (this._chat_history) this._chat_history[Symbol.dispose]();
         if (this._user) this._user[Symbol.dispose]();
         if (this._communicator) this._communicator[Symbol.dispose]();
     }

@@ -13,4 +13,7 @@ export namespace constants {
     const debug: boolean;
     const maxLength: number;
     const expirationTime: number;
+    const ratingsEnabled: boolean;
+    const textFeedbackEnabled: boolean;
+    const requireProfileImage: boolean;
 }

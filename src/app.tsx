@@ -1,9 +1,9 @@
 import React from 'react';  // eslint-disable-line
-import ChatBotify from './ChatBotify.tsx';
-import Session from './Handlers/Session.ts';
+import ChatBotAI from './ChatBotAi.tsx';
+import SessionManager from './Handlers/SessionManager.ts';
 
 const App = () => {
-    return <ChatBotify session= {new Session()}/>;
+    return <ChatBotAI manager={new SessionManager}/>;
 }
 
 export default App;

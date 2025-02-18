@@ -13,4 +13,7 @@ export const constants = {
     debug: __DEBUG__,
     maxLength: __MAX_LENGTH__,
     expirationTime: __EXPIRATION_TIME__,
+    ratingsEnabled: true,
+    textFeedbackEnabled: true,
+    requireProfileImage: true,
 };

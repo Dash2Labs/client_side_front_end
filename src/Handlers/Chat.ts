@@ -13,7 +13,7 @@ import { ChatSessionError } from './Errors/SessionError.ts';
 import { Axios, AxiosResponse } from 'axios';
 
 export interface ChatObject {
-    question: string;
+    message: string;
 };
 
 /**
@@ -29,16 +29,16 @@ class Chat {
     }
 
     /** 
-    * @method sendQuestion
+    * @method sendChat
     * @description Sends a chat question to the backend API and returns the response message.
-    * @param {ChatObject} question - The chat question object to be sent.
+    * @param {ChatObject} message - The chat question object to be sent.
     * @returns {Message} - The response message from the backend API.
     * @throws {ChatSessionError} - Throws an error if the request fails or the response status is not 200.
     */
-    public async sendQuestion(question: ChatObject): Promise<Message> {
+    public async sendChat(message: ChatObject): Promise<Message> {
         const url: string = "/api/chat";
     
-        let response = this._communicator.postRequest(question, url, {}).then((res) => {
+        let response = this._communicator.postRequest(message, url, {}).then((res) => {
             if (res && res.status === 200) {
                 return res.data.message as Message;
             }else {

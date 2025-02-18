@@ -33,6 +33,7 @@
     "@mui/material": "latest",
     "@types/uuid": "^10.0.0",
     "axios": "^1.7.7",
+    "chatbot-ai-lib": "file:.yalc/chatbot-ai-lib",
     "compression": "^1.7.5",
     "cors": "^2.8.5",
     "express": "^4.21.1",

@@ -8,12 +8,12 @@
  */
 import axios, { AxiosRequestConfig, AxiosHeaders, AxiosResponse } from "axios";
 import { FeedbackObject } from "./Feedback.ts";
-import { HistoryObject } from "./History.ts";
+import { ChatHistoryObject } from "./ChatHistory.ts";
 import { ChatObject } from "./Chat.ts";
 import { SettingsObject } from "./Settings.ts";
 import AuthorizationError from "../Authorization/Errors/AuthorizationError.ts";
 
-type RequestBody = FeedbackObject | HistoryObject | ChatObject | SettingsObject;
+type RequestBody = FeedbackObject | ChatHistoryObject | ChatObject | SettingsObject;
 
 /**
  * @class Communicator

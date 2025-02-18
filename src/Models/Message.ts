@@ -4,4 +4,8 @@ export interface Message {
     timestamp: string;
     files?: string[];
     annotations?: string[];
+    session_id?: string;
+    chat_id?: string;
+    feedback?: string;
+    rating?: number;
 };
