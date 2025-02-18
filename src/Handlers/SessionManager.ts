@@ -66,7 +66,7 @@ class SessionManager {
      * @param {string} session_id
      */
     private _addLocalActiveSession(session_id: string) {
-        this.activeSessions[session_id] = this;
+        this.activeSessions[session_id] = new Session(this, session_id);
     }
 
     /**
