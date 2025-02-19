@@ -1,6 +1,6 @@
 import Session from './Session';
 import Communicator from './Communicator.ts';
-import { HistoryCard, HistoryItem } from 'chatbot-ai-lib';
+import { HistoryCard, HistoryCardProps } from 'chatbot-ai-lib';
 import { v4 as uuidv4 } from 'uuid';
 
 class SessionManager {
@@ -54,7 +54,7 @@ class SessionManager {
             if (res.status !== 200) {
                 console.error("Error getting session history: ", res.status);
             } else {
-                return res.data as HistoryItem[];
+                return res.data as HistoryCardProps[];
             }
         }).catch((error) => {         
             console.error("Error getting session history: ", error);
