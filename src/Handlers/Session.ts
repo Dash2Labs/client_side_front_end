@@ -128,9 +128,8 @@ export default class Session {
             console.error("Feedback too long"); // won't throw for feedback error
         }
         feedback.feedback = xss(feedback.feedback);
-        feedback.question = xss(feedback.question);
-        feedback.response = xss(feedback.response);
         feedback.feedbackId = xss(feedback.feedbackId);
+        feedback.chatId = xss(feedback.chatId);
 
         try {
             return this._feedback.sendFeedback(feedback);

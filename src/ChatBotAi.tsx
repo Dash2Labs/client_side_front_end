@@ -136,32 +136,37 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         // handle search change event
     }
 
-    function handleStarClick(star: number, chatId?: string, sessionId?: string):void {
+    function handleStarClick(star: number, chatId: string, sessionId?: string):void {
         // handle star click event
-        if (!sessionId) {
-            createNewChat();
-        }
         const session = getActiveSession();
+        if(session)
+            {            
+                const send_feedback :FeedbackObject = {
+                feedback: "NULL",
+                feedbackId: star.toString(),
+                chatId : chatId,
+            };
+            session.sendFeedback(send_feedback);
+        }
     }
 
     function handleTextfeedbackSubmit (
         feedback: string,
-        chatId?: string,
+        chatId: string,
         sessionId?: string): void
         {
         // handle text feedback submit event
         const session = getActiveSession();
-        for (let index = 0; index < chats.length; index++) {
-            if (chats[index].chatID = );
-            
-        }
-        const send_feedback :FeedbackObject = {
-            feedback: feedback,
-            feedbackId: chatId?,
-            
 
-        };
-        session.sendFeedback(feedback);
+        if(session)
+            {            
+                const send_feedback :FeedbackObject = {
+                feedback: feedback,
+                feedbackId: "-1",
+                chatId : chatId,
+            };
+            session.sendFeedback(send_feedback);
+        }
     }
 
     function updateSessionId(sessionId: string) {
