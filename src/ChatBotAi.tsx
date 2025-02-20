@@ -2,6 +2,7 @@ import React from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
 import Session from './Handlers/Session';
 import SessionManager from './Handlers/SessionManager';
+import { get } from 'http';
 
 interface ChatBotAIProps {
     manager: SessionManager;
@@ -80,15 +81,27 @@ const ChatBotAI = (props: ChatBotAIProps) => {
     }
 
     function handleChatScroll() {
-        // handle scroll event
+        /*
+        On chat scroll message must appear at the top well scrolling 
+        */ 
+
     }
 
     function handleChatScrollBottom() {
-        // handle scroll bottom event
+        /*
+        when this occurs we just stop nothing is supposed to happen
+        */
     }
 
     function handleChatScrollTop() {
-        // handle scroll top event
+        /*
+        loads more conversation, partial load get the next 5?
+        Check LOGIC DUSTIN MADE THE GET CHAT HISTORY  FUNCTION CALL ALL HISTORY EACH TIME DID NOT IMPLEMENT CACHE
+        */
+       const session = getActiveSession();
+       const current_chat_length = chats.length; 
+       const history =   session?.getChatHistory(current_chat_length) || [];
+       history.then((res) => setChats(res));
     }
 
     function handleChatSubmit(message: string, sessionId?: string) {

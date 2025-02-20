@@ -145,9 +145,15 @@ export default class Session {
      * @description This is a callback function for the ui to get the history
      * @returns {ChatCardProps} the history of user sessions
      */
-    public async getChatHistory(): Promise<ChatCardProps[]> {
+    public async getChatHistory(current_length:number = 0): Promise<ChatCardProps[]> {
+
         return this._chat_history.getChatHistory(this.session_id)
             .then((chats) => {
+                if (chats.chats.length  == 0)
+                {
+                    console.log("There was no chat history available")
+                    return [];
+                }
                 const chat_history = chats.chats.map((chat) => {
                     return {
                         // user details
@@ -156,7 +162,6 @@ export default class Session {
                         isProfileImageRequired: constants.requireProfileImage,
                         userName: "",
                         userProfileImage: "",
-
                         //Basic details
                         chatId: chat.chat_id,
                         feedback: chat.feedback,
@@ -170,10 +175,8 @@ export default class Session {
                         textFeedbackEnabled: constants.textFeedbackEnabled,
                         timestamp: chat.timestamp,
                         type: chat.type,
-
-
                     } as ChatCardProps;
-            });
+            })?.slice(current_length, Math.min(current_length + 10, chats.chats.length));
             return chat_history;
         }).catch((error) => {
             console.error("Error getting chat history: ", error);
