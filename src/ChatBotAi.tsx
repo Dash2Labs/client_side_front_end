@@ -2,7 +2,7 @@ import React from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
 import Session from './Handlers/Session';
 import SessionManager from './Handlers/SessionManager';
-import { get } from 'http';
+import { constants } from  './constants';
 
 interface ChatBotAIProps {
     manager: SessionManager;
@@ -39,7 +39,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
                 handleActionCardClick={handleActionCardClick}
                 history={session_history}
                 isMobile={false}
-                isProfileImageRequired={false}
+                isProfileImageRequired={constants.requireProfileImage}
                 onCardClick={handleCardClick}
                 onChatScroll={handleChatScroll}
                 onChatScrollBottom={handleChatScrollBottom}
@@ -54,8 +54,8 @@ const ChatBotAI = (props: ChatBotAIProps) => {
                 onStarClick={handleStarClick}
                 onTextFeedbackSubmit={handleTextfeedbackSubmit}
                 sessionId={session_id}
-                userName="User"
-                userProfileImage=""
+                userName={getActiveSession().settings.client_settings?.userName || "User"}
+                userProfileImage={getActiveSession().settings.client_settings?.userProfileImage || ""}
             />
         </div>
     );
