@@ -128,9 +128,8 @@ export default class Session {
             console.error("Feedback too long"); // won't throw for feedback error
         }
         feedback.feedback = xss(feedback.feedback);
-        feedback.question = xss(feedback.question);
-        feedback.response = xss(feedback.response);
         feedback.feedbackId = xss(feedback.feedbackId);
+        feedback.chatId = xss(feedback.chatId);
 
         try {
             return this._feedback.sendFeedback(feedback);
@@ -145,9 +144,15 @@ export default class Session {
      * @description This is a callback function for the ui to get the history
      * @returns {ChatCardProps} the history of user sessions
      */
-    public async getChatHistory(): Promise<ChatCardProps[]> {
-        return this._chat_history.getChatHistory(this.session_id)
+    public async getChatHistory(current_length:number = 0): Promise<ChatCardProps[]> {
+
+        return this._chat_history.getChatHistory(this.session_id, current_length)
             .then((chats) => {
+                if (chats.chats.length  == 0)
+                {
+                    console.log("There was no chat history available")
+                    return [];
+                }
                 const chat_history = chats.chats.map((chat) => {
                     return {
                         // user details
@@ -156,7 +161,6 @@ export default class Session {
                         isProfileImageRequired: constants.requireProfileImage,
                         userName: "",
                         userProfileImage: "",
-
                         //Basic details
                         chatId: chat.chat_id,
                         feedback: chat.feedback,
@@ -170,8 +174,6 @@ export default class Session {
                         textFeedbackEnabled: constants.textFeedbackEnabled,
                         timestamp: chat.timestamp,
                         type: chat.type,
-
-
                     } as ChatCardProps;
             });
             return chat_history;

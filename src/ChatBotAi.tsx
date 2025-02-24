@@ -2,6 +2,8 @@ import React from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
 import Session from './Handlers/Session';
 import SessionManager from './Handlers/SessionManager';
+import  {FeedbackObject} from './Handlers/Feedback';
+
 
 interface ChatBotAIProps {
     manager: SessionManager;
@@ -61,7 +63,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
 
     return chatbot;
 
-    function handleActionCardClick() {
+    function handleActionCardClick(label: string, sessionId?: string) {
         // handle action card click event
     }
 
@@ -79,16 +81,28 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         history.then((res) => setChats(res));
     }
 
-    function handleChatScroll() {
-        // handle scroll event
+    function handleChatScroll(event: React.UIEvent<HTMLDivElement>): void {
+        /*
+        On chat scroll message must appear at the top well scrolling 
+        */
+
     }
 
-    function handleChatScrollBottom() {
-        // handle scroll bottom event
+    function handleChatScrollBottom(): void {
+        /*
+        when this occurs we just stop nothing is supposed to happen
+        */
     }
 
-    function handleChatScrollTop() {
-        // handle scroll top event
+    function handleChatScrollTop():void {
+        /*
+        loads more conversation, partial load get the next 5?
+        Check LOGIC DUSTIN MADE THE GET CHAT HISTORY  FUNCTION CALL ALL HISTORY EACH TIME DID NOT IMPLEMENT CACHE
+        */
+       const session = getActiveSession();
+       const chat_id = chats[chats.length-1].chatId;
+       const history =   session?.getChatHistory(chat_id) || [];
+       history.then((res) => setChats(res));
     }
 
     function handleChatSubmit(message: string, sessionId?: string) {
@@ -101,7 +115,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         }
     }
 
-    function handleFileUpload(file: File) {
+    function handleFileUpload(file: File, sessionId?:string):void {
         // handle file upload event
     }
 
@@ -121,12 +135,37 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         // handle search change event
     }
 
-    function handleStarClick() {
+    function handleStarClick(star: number, chatId: string, sessionId?: string): void {
         // handle star click event
+        const session = getActiveSession();
+        if(session)
+            {            
+                const send_feedback :FeedbackObject = {
+                feedback: "NULL",
+                feedbackId: star.toString(),
+                chatId : chatId,
+            };
+            session.sendFeedback(send_feedback);
+        }
     }
 
-    function handleTextfeedbackSubmit() {
+    function handleTextfeedbackSubmit (
+        feedback: string,
+        chatId: string,
+        sessionId?: string): void
+        {
         // handle text feedback submit event
+        const session = getActiveSession();
+
+        if(session)
+            {            
+                const send_feedback :FeedbackObject = {
+                feedback: feedback,
+                feedbackId: "-1",
+                chatId : chatId,
+            };
+            session.sendFeedback(send_feedback);
+        }
     }
 
     function updateSessionId(sessionId: string) {
