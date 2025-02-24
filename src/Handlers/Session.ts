@@ -140,13 +140,34 @@ export default class Session {
         }
     }
 
+    public async fetchPreviousChats(startId: string): Promise<ChatCardProps[]> {
+        return this.getChatHistory(startId, constants.historyLength)
+            .then((chats) => {
+                return chats;
+            }).catch((error) => { 
+                console.error("Error fetching previous chats: ", error);
+                return [];
+            });          
+    }
+
+    public async fetchLatestChats(): Promise<ChatCardProps[]> {
+        return this.getChatHistory("0", constants.historyLength)
+            .then((chats) => {  
+                return chats;
+            }
+        ).catch((error) => {
+            console.error("Error fetching latest chats: ", error);
+            return [];
+        });
+    }
+
     /**
      * @method getHistory
      * @description This is a callback function for the ui to get the history
      * @returns {ChatCardProps} the history of user sessions
      */
-    public async getChatHistory(): Promise<ChatCardProps[]> {
-        return this._chat_history.getChatHistory(this.session_id)
+    public async getChatHistory(startId: string, length: number): Promise<ChatCardProps[]> {
+        return this._chat_history.getChatHistory(this.session_id, startId, length)
             .then((chats) => {
                 const chat_history = chats.chats.map((chat) => {
                     return {
@@ -170,8 +191,6 @@ export default class Session {
                         textFeedbackEnabled: constants.textFeedbackEnabled,
                         timestamp: chat.timestamp,
                         type: chat.type,
-
-
                     } as ChatCardProps;
             });
             return chat_history;

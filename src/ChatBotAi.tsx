@@ -21,7 +21,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
     }, []);
     React.useEffect(() => {
         const fetchChats = async () => {
-            getActiveSession().getChatHistory().then((chats) => setChats(chats));
+            getActiveSession().fetchLatestChats().then((chats) => setChats(chats));
             setChats(chats);
         };
         fetchChats();
@@ -61,6 +61,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
 
     return chatbot;
 
+
     function handleActionCardClick() {
         // handle action card click event
     }
@@ -75,12 +76,19 @@ const ChatBotAI = (props: ChatBotAIProps) => {
             setActiveCardId(cardDetails.sessionId);
         }
         // Load the new active session chats
-        const history = session?.getChatHistory() || [];
+        const history = session?.fetchLatestChats() || [];
         history.then((res) => setChats(res));
     }
 
-    function handleChatScroll() {
+    function handleChatScroll(e: React.UIEvent<HTMLDivElement>) {
         // handle scroll event
+        const container = e.target as HTMLDivElement;
+        if (container.scrollTop === 0) {
+            handleChatScrollTop();
+        }
+        if (container.scrollTop + container.clientHeight === container.scrollHeight) {
+            handleChatScrollBottom();
+        }
     }
 
     function handleChatScrollBottom() {
@@ -89,6 +97,14 @@ const ChatBotAI = (props: ChatBotAIProps) => {
 
     function handleChatScrollTop() {
         // handle scroll top event
+        const session = getActiveSession();
+        const oldest_chat = chats[chats.length - 1];
+        if (session && oldest_chat && oldest_chat.chatId) {
+            session.fetchPreviousChats(oldest_chat.chatId).then((chats) => {
+                const oldChats = chats.filter((chat) => !chats.find((c) => c.chatId === chat.chatId));
+                setChats([...chats, ...oldChats]);
+            });
+        }
     }
 
     function handleChatSubmit(message: string, sessionId?: string) {

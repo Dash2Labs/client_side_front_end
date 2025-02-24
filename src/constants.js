@@ -17,4 +17,5 @@ export const constants = {
     textFeedbackEnabled: true,
     requireProfileImage: true,
     defaultProfileImage: "",
+    historyLength: 5,
 };
