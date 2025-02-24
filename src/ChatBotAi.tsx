@@ -2,8 +2,7 @@ import React from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
 import Session from './Handlers/Session';
 import SessionManager from './Handlers/SessionManager';
-import { get } from 'http';
-import  Feedback, {FeedbackObject} from './Handlers/Feedback';
+import  {FeedbackObject} from './Handlers/Feedback';
 
 
 interface ChatBotAIProps {
@@ -101,8 +100,8 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         Check LOGIC DUSTIN MADE THE GET CHAT HISTORY  FUNCTION CALL ALL HISTORY EACH TIME DID NOT IMPLEMENT CACHE
         */
        const session = getActiveSession();
-       const current_chat_length = chats.length; 
-       const history =   session?.getChatHistory(current_chat_length) || [];
+       const chat_id = chats[chats.length-1].chatId;
+       const history =   session?.getChatHistory(chat_id) || [];
        history.then((res) => setChats(res));
     }
 
@@ -136,7 +135,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         // handle search change event
     }
 
-    function handleStarClick(star: number, chatId: string, sessionId?: string):void {
+    function handleStarClick(star: number, chatId: string, sessionId?: string): void {
         // handle star click event
         const session = getActiveSession();
         if(session)

@@ -146,7 +146,7 @@ export default class Session {
      */
     public async getChatHistory(current_length:number = 0): Promise<ChatCardProps[]> {
 
-        return this._chat_history.getChatHistory(this.session_id)
+        return this._chat_history.getChatHistory(this.session_id, current_length)
             .then((chats) => {
                 if (chats.chats.length  == 0)
                 {
@@ -175,7 +175,7 @@ export default class Session {
                         timestamp: chat.timestamp,
                         type: chat.type,
                     } as ChatCardProps;
-            })?.slice(current_length, Math.min(current_length + 10, chats.chats.length));
+            });
             return chat_history;
         }).catch((error) => {
             console.error("Error getting chat history: ", error);

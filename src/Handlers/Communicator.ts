@@ -52,7 +52,7 @@ class Communicator {
         // Send request to the server
         this._appendHeaders(custom_headers);
         while (this._retryCount <= this._maxRetries) {
-                const response = await axios.get(url, this._config).then((response) => {
+                const response = await axios.get(url, this._config, ).then((response) => {
                 if (response.status === 206) {
                     // Partial Success
                     console.error("getRequest: Partial Content Error sending request: ", response);
