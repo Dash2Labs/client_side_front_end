@@ -41,6 +41,8 @@ export default class Session {
     private _chat_history!: ChatHistory; // this is the history handler is resposible for getting the history
     private _settings!: Settings; // this is the settings handler is resposible for getting and setting the settings
     private _user!: User; // this is the user object that is used to authenticate the user
+    private _ai_name: string = ""; // this is the name of the AI that is used to chat with the user
+    private _ai_profile_image: string = ""; // this is the profile image of the AI that is used to chat with the user
     private _communicator!: Communicator; // this is the communicator object that is used to send and receive messages from the server
     public createdAt!: Date; // this is the date the session was created
     public expiresAt!: Date; // this is the date the session will expire
@@ -140,22 +142,43 @@ export default class Session {
         }
     }
 
+    public async fetchPreviousChats(startId: string): Promise<ChatCardProps[]> {
+        return this.getChatHistory(startId, constants.historyLength)
+            .then((chats) => {
+                return chats;
+            }).catch((error) => { 
+                console.error("Error fetching previous chats: ", error);
+                return [];
+            });          
+    }
+
+    public async fetchLatestChats(): Promise<ChatCardProps[]> {
+        return this.getChatHistory("0", constants.historyLength)
+            .then((chats) => {  
+                return chats;
+            }
+        ).catch((error) => {
+            console.error("Error fetching latest chats: ", error);
+            return [];
+        });
+    }
+
     /**
      * @method getHistory
      * @description This is a callback function for the ui to get the history
      * @returns {ChatCardProps} the history of user sessions
      */
-    public async getChatHistory(): Promise<ChatCardProps[]> {
-        return this._chat_history.getChatHistory(this.session_id)
+    public async getChatHistory(startId: string, length: number): Promise<ChatCardProps[]> {
+        return this._chat_history.getChatHistory(this.session_id, startId, length)
             .then((chats) => {
                 const chat_history = chats.chats.map((chat) => {
                     return {
                         // user details
-                        aiName: "",
-                        aiProfileImage: "",
+                        aiName: this._ai_name,
+                        aiProfileImage: this._ai_profile_image,
                         isProfileImageRequired: constants.requireProfileImage,
-                        userName: "",
-                        userProfileImage: "",
+                        userName: this._user.user_id as string,
+                        userProfileImage: this._user.photo as string,
 
                         //Basic details
                         chatId: chat.chat_id,
@@ -170,8 +193,6 @@ export default class Session {
                         textFeedbackEnabled: constants.textFeedbackEnabled,
                         timestamp: chat.timestamp,
                         type: chat.type,
-
-
                     } as ChatCardProps;
             });
             return chat_history;

@@ -31,8 +31,12 @@ class ChatHistory {
      * @description Gets the chat history of user session from the backend API.
      * @returns {HistoryObject} - The chat history of a user session.
      */
-    public async getChatHistory(session_id: string): Promise<ChatHistoryObject> {
-        const url: string = `/api/chats/${session_id}`;
+    public async getChatHistory(session_id: string, startId: string, length: number): Promise<ChatHistoryObject> {
+        const start = parseInt(startId);
+        if (isNaN(start)) {
+            throw new Error("StartId must be a number");
+        }
+        const url: string = `/api/chats/${session_id}/?startId=${startId}&length=${length}`;
         let response: any; // eslint-disable-line
         this._communicator.getRequest(url, {}).then((res) => {
             response = res;
