@@ -2,6 +2,7 @@ import React from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
 import Session from './Handlers/Session';
 import SessionManager from './Handlers/SessionManager';
+import { get } from 'http';
 
 interface ChatBotAIProps {
     manager: SessionManager;
@@ -30,11 +31,11 @@ const ChatBotAI = (props: ChatBotAIProps) => {
     const chatbot =  (
         <div style={{ height: "100vh" }}>
             <FullChatbot
-                aiName="AI"
-                aiProfileImage=""
+                aiName={getActiveSession().settings.client_settings?.aiName || "AI"}
+                aiProfileImage={getActiveSession().settings.client_settings?.aiProfileImage || ""}
                 chats={chats}
-                compactLogo=""
-                fullLogo=""
+                compactLogo={getActiveSession().settings.client_settings?.compactLogo || ""}
+                fullLogo={getActiveSession().settings.client_settings?.fullLogo || ""}
                 handleActionCardClick={handleActionCardClick}
                 history={session_history}
                 isMobile={false}
