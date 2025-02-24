@@ -41,8 +41,8 @@ export default class Session {
     private _chat_history!: ChatHistory; // this is the history handler is resposible for getting the history
     private _settings!: Settings; // this is the settings handler is resposible for getting and setting the settings
     private _user!: User; // this is the user object that is used to authenticate the user
-    private _ai_name: string = ""; // this is the name of the AI that is used to chat with the user
-    private _ai_profile_image: string = ""; // this is the profile image of the AI that is used to chat with the user
+    private _aiName: string = ""; // this is the name of the AI that is used to chat with the user
+    private _aiProfile_image: string = ""; // this is the profile image of the AI that is used to chat with the user
     private _communicator!: Communicator; // this is the communicator object that is used to send and receive messages from the server
     public createdAt!: Date; // this is the date the session was created
     public expiresAt!: Date; // this is the date the session will expire
@@ -174,8 +174,8 @@ export default class Session {
                 const chat_history = chats.chats.map((chat) => {
                     return {
                         // user details
-                        aiName: this._ai_name,
-                        aiProfileImage: this._ai_profile_image,
+                        aiName: this._aiName,
+                        aiProfileImage: this._aiProfile_image,
                         isProfileImageRequired: constants.requireProfileImage,
                         userName: this._user.user_id as string,
                         userProfileImage: this._user.photo as string,
