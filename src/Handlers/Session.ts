@@ -10,7 +10,7 @@ import { ChatCardProps } from 'chatbot-ai-lib';
 import Chat, { ChatObject } from './Chat.ts';
 import Feedback, { FeedbackObject } from './Feedback.ts';
 import ChatHistory, { ChatHistoryObject } from './ChatHistory.ts';
-import Settings, { SettingsObject } from './Settings.ts';
+import Settings, { SettingsObject, defaultSettings } from './Settings.ts';
 import User from '../Models/User.ts';
 import { constants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
@@ -46,6 +46,7 @@ export default class Session {
     public expiresAt!: Date; // this is the date the session will expire
     public session_id!: string; // this is the session id that is used to identify the session
     public manager!: SessionManager; // this is the session manager that is used to manage the active sessions
+    public settings: SettingsObject = defaultSettings; // this is the settings object that is used to store the user settings
 
     /**
     * @description This is the constructor for the Session class
@@ -98,8 +99,7 @@ export default class Session {
                         }
                     }
                 });
-        }
-        
+        }  
     }
 
     /**
@@ -151,11 +151,11 @@ export default class Session {
                 const chat_history = chats.chats.map((chat) => {
                     return {
                         // user details
-                        aiName: "",
-                        aiProfileImage: "",
+                        aiName: this.settings.client_settings.aiName,
+                        aiProfileImage: this.settings.client_settings.aiProfileImage,
                         isProfileImageRequired: constants.requireProfileImage,
-                        userName: "",
-                        userProfileImage: "",
+                        userName: this._user.userName as string,
+                        userProfileImage: this._user.photo as string,
 
                         //Basic details
                         chatId: chat.chat_id,
@@ -179,29 +179,6 @@ export default class Session {
             console.error("Error getting chat history: ", error);
             return [];
         });
-    }
-
-    /**
-     * @method getSettings
-     * @description This is a callback function for the ui to get configuration settings
-     * @returns {SettingsObject} the configuration settings
-     */
-     public getSettings() {
-        return this._settings.getSettings();
-    }
-
-    /**
-     * @method setSettings
-     * @description This is a callback function for the ui to set configuration settings.  Client settings are ignored.  Only user settings.
-     * @param {SettingsObject} settings
-     * @throws {SettingsSessionError} if the settings are too long
-     */
-     public setSettings(settings: SettingsObject) {
-        if (getSizeInBytes(settings) > constants.maxLength) {
-            throw new SettingsSessionError("Settings too long");
-        }
-        settings.user_settings = xss(settings.user_settings);
-        this._settings.setSettings(settings);
     }
     
     /**
@@ -236,8 +213,14 @@ export default class Session {
             else {
                 this.session_id = uuidv4();  // ui didn't give us a session id so we create a new one
             }
-            this._communicator = new Communicator(this.session_id, this._user.user_id as string);
+            this._communicator = new Communicator(this.session_id, this._user.userId as string);
             this._initializeHandlers();
+            // Get settings for the user
+            try {
+                this.settings = this._settings.getSettings();
+            } catch (error) {
+                throw error;
+            }
         }
         else {
             throw new AuthorizationError("User not authorized");
@@ -270,7 +253,7 @@ export default class Session {
         if (!this.session_id) {
             throw new SessionError("Session ID not defined"); // This should never happen
         }
-        else if (!this._user || !this._user.user_id) {
+        else if (!this._user || !this._user.userId) {
             throw new AuthorizationError("User not defined"); // This should never happen
         }
         else {
