@@ -10,8 +10,6 @@
 import { express, axios, constants, handleResponse, checkSession, addCommonHeaders } from '../common_imports.js';
 import { sizeLimit, xssCheck } from '../middleware/middleware.js';
 import er from '../errors.js';
-import { query } from 'express';
-
 
 interface ChatObject {
     question: string;
