@@ -11,7 +11,6 @@ import { express, axios, constants, handleResponse, checkSession, addCommonHeade
 import { sizeLimit, xssCheck } from '../middleware/middleware.js';
 import er from '../errors.js';
 
-
 interface ChatObject {
     question: string;
 }
@@ -67,11 +66,21 @@ api.post('/feedback', (req, res) => {
     });
 });
 
-api.get('/history', (req, res) => {
+api.get('/chats/:session_id', (req, res) => {
+    const session_id = req.params.session_id;
+    const queryParams = req.query;
+    let startId = "0";
+    let length = "5";
+    if (queryParams && queryParams.startId) {
+        startId = queryParams.startId as string;
+    }
+    if (queryParams && queryParams.length) {
+        length = queryParams.length as string;
+    }
     let options = addCommonHeaders(req);
     checkSession(res, options.headers['dash2labs-session-id']);
 
-    ax.get(`${constants.server}/api/history`, options).then((response) => {
+    ax.get(`${constants.server}/api/chats/${session_id}/?startId=${startId}&length=${length}`, options).then((response) => {
         handleResponse(res, response, options.headers['correlation-id']);
     }).catch(() => {
         res.status(500).send(er.serverError);
