@@ -8,15 +8,7 @@
  */
 
 import Communicator from "./Communicator.ts"
-
-// Interface defining the structure of a feedback object
-export interface FeedbackObject {
-  feedback: string; // The text of the feedback provided by the user
-  feedbackId: string; // ID representing the type of feedback (e.g., emoji feedback)
-  question: string; // The user's query/question that was answered
-  response: string; // The bot's response to the user's query
-  responseTime: number; // Time taken by the bot to generate the response (in milliseconds)
-}
+import { FeedbackObject } from "../Models/Feedback.ts";
 
 /**
  * @class Feedback
