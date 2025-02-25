@@ -1,5 +1,5 @@
 /**
- * @file History.ts
+ * @file ChatHistory.ts
  * @description This file contains the History class which handles history of user sessions.
  * @version 1.0.0
  * @date 2023-10-05

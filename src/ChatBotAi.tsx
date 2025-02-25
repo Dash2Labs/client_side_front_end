@@ -2,6 +2,8 @@ import React from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
 import Session from './Handlers/Session';
 import SessionManager from './Handlers/SessionManager';
+import { constants } from 'buffer';
+import { getMyId } from './Authorization/Msgraph';
 
 interface ChatBotAIProps {
     manager: SessionManager;
@@ -9,9 +11,18 @@ interface ChatBotAIProps {
 
 const ChatBotAI = (props: ChatBotAIProps) => {
     const manager = props.manager;
+    const user = new User();
     const [session_id, setSessionId] = React.useState(manager.activeSessionId);
     const [chats, setChats] = React.useState<ChatCardProps[]>([]);
     const [session_history, setSessionHistory] = React.useState<HistoryCardProps[]>([]);
+    React.useEffect(() => {
+        if (constants.useauth === true && !getMyId()) {
+            if (login()) {
+
+            }
+        }
+
+    });
     React.useEffect(() => {
         const fetchSessionHistory = async () => {
             const summaries = (await manager.getSessionHistorySummaries()) || [];

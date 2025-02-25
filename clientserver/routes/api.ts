@@ -79,6 +79,17 @@ api.get('/history', (req, res) => {
     });
 });
 
+api.get('/session/summaries', (req, res) => {
+    let options = addCommonHeaders(req);
+
+    ax.get(`${constants.server}/api/summaries`, options).then((response) => {
+        handleResponse(res, response, options.headers['correlation-id']);
+    }).catch(() => {
+        res.status(500).send(er.serverError);
+    });
+});
+
+
 api.get('/settings', (req, res) => {
     let options = addCommonHeaders(req);
     checkSession(res, options.headers['dash2labs-session-id']);

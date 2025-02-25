@@ -1,13 +1,17 @@
 import Session from './Session';
 import Communicator from './Communicator.ts';
-import { HistoryCard, HistoryCardProps } from 'chatbot-ai-lib';
+import { HistoryCardProps } from 'chatbot-ai-lib';
 import { v4 as uuidv4 } from 'uuid';
 
 class SessionManager {
     public activeSessions = {} as Map<string, Session>;
+    public defaultSessionId: string = "6d7312db-c7fa-4cac-8937-bbf3a60102ad";
     public activeSessionId: string = "";
     private _communicator: Communicator = new Communicator(uuidv4(), "session_manager");
 
+    public constructor() {
+        this.activeSessionId = this.defaultSessionId;
+    }
     /**
      * @description This function validates the session id
      * @param {string} session_id
@@ -50,9 +54,9 @@ class SessionManager {
      * @description This function gets the session history summary information
      */
     public async getSessionHistorySummaries() {
-        return this._communicator.getRequest(`/session/history`, {}).then((res) => {
+        return this._communicator.getRequest(`/session/summaries`, {}).then((res) => {
             if (res.status !== 200) {
-                console.error("Error getting session history: ", res.status);
+                console.error("Error getting summaries: ", res.status);
             } else {
                 return res.data as HistoryCardProps[];
             }
