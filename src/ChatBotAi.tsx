@@ -2,7 +2,7 @@ import React from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
 import Session from './Handlers/Session';
 import SessionManager from './Handlers/SessionManager';
-import { constants } from 'buffer';
+import { constants } from  './constants';
 import { getMyId } from './Authorization/Msgraph';
 
 interface ChatBotAIProps {
@@ -41,15 +41,15 @@ const ChatBotAI = (props: ChatBotAIProps) => {
     const chatbot =  (
         <div style={{ height: "100vh" }}>
             <FullChatbot
-                aiName="AI"
-                aiProfileImage=""
+                aiName={getActiveSession().settings.client_settings?.aiName || "AI"}
+                aiProfileImage={getActiveSession().settings.client_settings?.aiProfileImage || ""}
                 chats={chats}
-                compactLogo=""
-                fullLogo=""
+                compactLogo={getActiveSession().settings.client_settings?.compactLogo || ""}
+                fullLogo={getActiveSession().settings.client_settings?.fullLogo || ""}
                 handleActionCardClick={handleActionCardClick}
                 history={session_history}
                 isMobile={false}
-                isProfileImageRequired={false}
+                isProfileImageRequired={constants.requireProfileImage}
                 onCardClick={handleCardClick}
                 onChatScroll={handleChatScroll}
                 onChatScrollBottom={handleChatScrollBottom}
@@ -64,8 +64,8 @@ const ChatBotAI = (props: ChatBotAIProps) => {
                 onStarClick={handleStarClick}
                 onTextFeedbackSubmit={handleTextfeedbackSubmit}
                 sessionId={session_id}
-                userName="User"
-                userProfileImage=""
+                userName={getActiveSession().settings.client_settings?.userName || "User"}
+                userProfileImage={getActiveSession().settings.client_settings?.userProfileImage || ""}
             />
         </div>
     );
@@ -124,7 +124,10 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         }
         const session = getActiveSession();
         if (session) {
-            session.sendChat({message});
+            session.sendChat({message}).then((chat) => {
+                setChats([...chats, chat]);
+            }
+        );
         }
     }
 
