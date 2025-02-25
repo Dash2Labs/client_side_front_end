@@ -111,12 +111,38 @@ export default class Session {
      * @throws {ChatSessionError} if the question is invalid
      * @returns {Message} the response message from the server
      */
-    public async sendChat(question: ChatObject): Promise<Message> {
+    public async sendChat(question: ChatObject): Promise<ChatCardProps> {
         if (question.message.length === 0 || getSizeInBytes(question) > constants.maxLength) {
             throw new ChatSessionError("Invalid Question Length");
         }
         question.message = xss(question.message);
-        return await this._chat.sendChat(question);
+        return this._chat.sendChat(question).then((chat) => {
+            return {
+                // user details
+                aiName: this._aiName,
+                aiProfileImage: this._aiProfile_image,
+                isProfileImageRequired: constants.requireProfileImage,
+                userName: this._user.user_id as string,
+                userProfileImage: this._user.photo as string,
+
+                //Basic details
+                chatId: chat.chat_id,
+                feedback: chat.feedback,
+                onStarClick: this.handleStarClick,
+                onTextFeedbackSubmit: this.handleTextFeedbackSubmit,
+                rating: chat.rating,
+                ratingEnabled: constants.ratingsEnabled,
+                sender: chat.sender,
+                sessionId: chat.session_id,
+                text: chat.message,
+                textFeedbackEnabled: constants.textFeedbackEnabled,
+                timestamp: chat.timestamp,
+                type: chat.type,
+            } as ChatCardProps;
+        }).catch((error) => {
+            console.error("Error sending chat: ", error);
+            throw new ChatSessionError("Error sending chat: " + error.message);
+        });
     }
 
     /**
@@ -125,17 +151,16 @@ export default class Session {
      * @param {FeedbackObject} feedback
      * @returns {boolean} indicating success or failure of the operation
      */
-    public sendFeedback(feedback: FeedbackObject): boolean {
-        if (getSizeInBytes(feedback) > constants.maxLength) {
+    public sendFeedback(fb: FeedbackObject): boolean {
+        if (getSizeInBytes(fb) > constants.maxLength) {
             console.error("Feedback too long"); // won't throw for feedback error
         }
-        feedback.feedback = xss(feedback.feedback);
-        feedback.question = xss(feedback.question);
-        feedback.response = xss(feedback.response);
-        feedback.feedbackId = xss(feedback.feedbackId);
+
+        fb.feedback = fb.feedback ? xss(fb.feedback) : undefined;
+        fb.chatId = xss(fb.chatId);
 
         try {
-            return this._feedback.sendFeedback(feedback);
+            return this._feedback.sendFeedback(fb);
         } catch (error) {
             console.error("Error sending feedback: ", error);
             return false;
@@ -183,8 +208,8 @@ export default class Session {
                         //Basic details
                         chatId: chat.chat_id,
                         feedback: chat.feedback,
-                        onStarClick: () => {},
-                        onTextFeedbackSubmit: () => {},
+                        onStarClick: this.handleStarClick,
+                        onTextFeedbackSubmit: this.handleTextFeedbackSubmit,
                         rating: chat.rating,
                         ratingEnabled: constants.ratingsEnabled,
                         sender: chat.sender,
@@ -300,6 +325,23 @@ export default class Session {
             this._chat_history = new ChatHistory(this._communicator);
             this._settings = new Settings(this._communicator);
         }
+    }
+
+    public handleStarClick(star: number, chatId?: string, sessionId?: string) {
+        const fb: FeedbackObject = {
+            chatId: chatId as string,
+            star: star
+        };
+        this.sendFeedback(fb);
+    }
+    
+    
+    public handleTextFeedbackSubmit(feedback: string, chatId?: string, sessionId?: string) {
+        const fb: FeedbackObject = {
+            chatId: chatId as string,
+            feedback: feedback
+        };
+        this.sendFeedback(fb);
     }
 
     [Symbol.dispose]() {

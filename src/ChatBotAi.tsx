@@ -113,7 +113,10 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         }
         const session = getActiveSession();
         if (session) {
-            session.sendChat({message});
+            session.sendChat({message}).then((chat) => {
+                setChats([...chats, chat]);
+            }
+        );
         }
     }
 
