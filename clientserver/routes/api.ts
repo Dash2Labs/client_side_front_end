@@ -10,18 +10,11 @@
 import { express, axios, constants, handleResponse, checkSession, addCommonHeaders } from '../common_imports.js';
 import { sizeLimit, xssCheck } from '../middleware/middleware.js';
 import er from '../errors.js';
+import { FeedbackObject } from '../../src/Models/Feedback.js';
 
 
 interface ChatObject {
     question: string;
-}
-
-interface FeedbackObject {
-    feedback: string;
-    feedbackId: string;
-    question: string;
-    response: string;
-    responseTime: number;
 }
 
 const ax = axios.default;

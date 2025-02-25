@@ -10,7 +10,6 @@
 import Communicator from './Communicator.ts';
 import { Message } from '../Models/Message.ts';
 import { ChatSessionError } from './Errors/SessionError.ts';
-import { Axios, AxiosResponse } from 'axios';
 
 export interface ChatObject {
     message: string;
