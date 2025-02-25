@@ -10,6 +10,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getMyId, getProfile } from '../Authorization/Msgraph.ts';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
+import { constants } from '../constants.js';
 
 /**
  * @class User
@@ -18,8 +19,9 @@ import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
  * @property {string} _photo - The user's photo.
  */
 class User {
-    private _user_id?: string = "";
+    private _userId?: string = "";
     private _photo?: string = "";
+    private _userName?: string = "";
 
     constructor(anonymous: boolean = false) {
         this._initialize(anonymous);
@@ -34,21 +36,27 @@ class User {
      */
     private async _initialize(anonymous: boolean) {
         if (!anonymous) {
-            this._user_id = await getMyId();
-            if (!this._user_id) {
+            this._userId = await getMyId();
+            if (!this._userId) {
                 throw new AuthorizationError("User not authorized");
             }
             this._photo = await getProfile(null);
+            this._userName = await getProfile("displayName");
         } else {
-            this._user_id = ["A-", uuidv4()].join("");
+            this._userId = ["A-", uuidv4()].join("");
+            this._userName = "Guest";
+            this._photo = constants.defaultProfileImage;
         }
     }
     
-    get user_id(): string | undefined {
-        return this._user_id || undefined;
+    get userName(): string | undefined {
+        return this._userName || undefined;
+    }
+    get userId(): string | undefined {
+        return this._userId || undefined;
     }   
-    set user_id(user_id: string) {
-        this._user_id = user_id;
+    set userId(userId: string) {
+        this._userId = userId;
     }
     get photo(): string | undefined {
         return this._photo;

@@ -16,5 +16,6 @@ export namespace constants {
     const ratingsEnabled: boolean;
     const textFeedbackEnabled: boolean;
     const requireProfileImage: boolean;
+    const defaultProfileImage: string;
     const historyLength: number;
 }

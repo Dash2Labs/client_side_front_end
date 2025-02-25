@@ -12,12 +12,36 @@ import { AxiosResponse } from "axios";
 import { SettingsSessionError } from "../Handlers/Errors/SessionError.ts";
 import AuthorizationError from "../Authorization/Errors/AuthorizationError.ts";
 
+export interface ClientSettings {
+    // Settings common to all clients for a particular customer
+    aiName: string;
+    aiProfileImage: string;
+    fullLogo: string;
+    compactLogo: string;
+    isProfileImageRequired: boolean;
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SettingsObject {
     client_settings?: any; // Settings common to all clients for a particular customer
     user_settings?: any;  // Settings specific to a user
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
+
+const defaultClientSettings: ClientSettings = {
+    aiName: "AI",
+    aiProfileImage: "",
+    fullLogo: "",
+    compactLogo: "",
+    isProfileImageRequired: false
+};
+
+const defaultUserSettings: any = {}; // eslint-disable-line
+
+export const defaultSettings: SettingsObject = {
+    client_settings: defaultClientSettings,
+    user_settings: defaultUserSettings
+};
 
 /**
  * @class Settings
@@ -46,12 +70,16 @@ class Settings {
             console.error("Error getting history: ", error);
             throw error;
         });
-        let client_settings: any; // eslint-disable-line
+        let client_settings: ClientSettings = defaultClientSettings;
         let user_settings: any; // eslint-disable-line
         if (response) {
-            client_settings = response.data['client_settings'];
-            if (response.status === 206) {
-                user_settings = response.data['user_settings'];
+            if (response.status >= 200 && response.status < 300) {
+                if (response.data && response.data['client_settings']) {
+                    client_settings = response.data['client_settings'];
+                }
+                if (response.data && response.data['user_settings']) { // there are no  user settings defined yet
+                    user_settings = response.data['user_settings'];
+                }
             }
             if (response.status === 403) {
                 throw new AuthorizationError("Error getting settings: Unauthorized");
@@ -59,26 +87,6 @@ class Settings {
             return {client_settings: client_settings, user_settings: user_settings} as SettingsObject;
         }
         throw new SettingsSessionError("Error getting settings");
-    }
-
-    /**
-     * @method setSettings
-     * @description Sets the user settings in the backend API.
-     * @param {SettingsObject} settings - The user settings to be set.
-     * @throws {SettingsSessionError} - Throws an error if the request fails.
-     */
-    public setSettings(settings: SettingsObject): void {
-        const url: string = "/api/settings";
-        let response: any; // eslint-disable-line
-        this._communicator.postRequest(settings, url, {}).then((res) => {
-            response = res;
-        }).catch((error) => {
-            console.error("Error setting settings: ", error);
-            if (error.response.status === 403) {
-                throw new AuthorizationError("Error setting settings: Unauthorized");
-            }
-            throw error;
-        });
     }
 
     [Symbol.dispose](): void {
