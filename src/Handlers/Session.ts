@@ -8,8 +8,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ChatCardProps } from 'chatbot-ai-lib';
 import Chat, { ChatObject } from './Chat.ts';
-import Feedback, { FeedbackObject } from './Feedback.ts';
-import ChatHistory, { ChatHistoryObject } from './ChatHistory.ts';
+import Feedback from './Feedback.ts';
+import { FeedbackObject } from '../Models/Feedback.ts';
+import ChatHistory from './ChatHistory.ts';
 import Settings, { SettingsObject } from './Settings.ts';
 import User from '../Models/User.ts';
 import { constants } from '../constants.js';
@@ -17,7 +18,6 @@ import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
 import SessionError, { ChatSessionError, SettingsSessionError }  from './Errors/SessionError.ts';
 import Communicator from './Communicator.ts';
 import { getSizeInBytes } from '../Utilities/Utility.ts';
-import { Message } from '../Models/Message.ts';
 import SessionManager from './SessionManager.ts';
 import xss from 'xss';
 
