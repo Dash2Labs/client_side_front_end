@@ -28,7 +28,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
             setSessionHistory(summaries);
         };
         fetchSessionHistory();
-    }, []);
+    }, [session_id]);
     React.useEffect(() => {
         let fetchChats: () => Promise<void>;
         if (manager.activeSessionId === manager.defaultSessionId ||
@@ -41,7 +41,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
             activeSession?.fetchLatestChats().then((chats: ChatCardProps[]) => setChats(chats));
         };
         fetchChats();
-    }, []);
+    }, [session_id]);
 
     const chatbot =  (
         <div style={{ height: "100vh" }}>
@@ -50,33 +50,33 @@ const ChatBotAI = (props: ChatBotAIProps) => {
                 onError={(error, info) => {
                     console.error("Error loading chatbot: ", error, info);
                 }}> 
-            <FullChatbot
-                aiName={activeSession?.settings.client_settings?.aiName || "AI"}
-                aiProfileImage={activeSession?.settings.client_settings?.aiProfileImage || ""}
-                chats={chats}
-                compactLogo={activeSession?.settings.client_settings?.compactLogo || ""}
-                fullLogo={activeSession?.settings.client_settings?.fullLogo || ""}
-                handleActionCardClick={handleActionCardClick}
-                history={session_history}
-                isMobile={false}
-                isProfileImageRequired={constants.requireProfileImage}
-                onCardClick={handleCardClick}
-                onChatScroll={handleChatScroll}
-                onChatScrollBottom={handleChatScrollBottom}
-                onChatScrollTop={handleChatScrollTop}
-                onChatSubmit={handleChatSubmit}
-                onCreateNewChat={createNewChat}
-                onFileUpload={handleFileUpload}
-                onHistoryScroll={handleHistoryScroll}
-                onHistoryScrollBottom={handleHistoryScrollBottom}
-                onHistoryScrollTop={handleHistoryScrollTop}
-                onSearchChange={handleSearchChange}
-                onStarClick={handleStarClick}
-                onTextFeedbackSubmit={handleTextfeedbackSubmit}
-                sessionId={session_id}
-                userName={activeSession?.settings.client_settings?.userName || "User"}
-                userProfileImage={activeSession?.settings.client_settings?.userProfileImage || ""}
-            />
+                <FullChatbot
+                    aiName={activeSession?.settings.client_settings?.aiName || "AI"}
+                    aiProfileImage={activeSession?.settings.client_settings?.aiProfileImage || ""}
+                    chats={chats}
+                    compactLogo={activeSession?.settings.client_settings?.compactLogo || ""}
+                    fullLogo={activeSession?.settings.client_settings?.fullLogo || ""}
+                    handleActionCardClick={handleActionCardClick}
+                    history={session_history}
+                    isMobile={false}
+                    isProfileImageRequired={constants.requireProfileImage}
+                    onCardClick={handleCardClick}
+                    onChatScroll={handleChatScroll}
+                    onChatScrollBottom={handleChatScrollBottom}
+                    onChatScrollTop={handleChatScrollTop}
+                    onChatSubmit={handleChatSubmit}
+                    onCreateNewChat={createNewChat}
+                    onFileUpload={handleFileUpload}
+                    onHistoryScroll={handleHistoryScroll}
+                    onHistoryScrollBottom={handleHistoryScrollBottom}
+                    onHistoryScrollTop={handleHistoryScrollTop}
+                    onSearchChange={handleSearchChange}
+                    onStarClick={handleStarClick}
+                    onTextFeedbackSubmit={handleTextfeedbackSubmit}
+                    sessionId={session_id}
+                    userName={activeSession?.settings.client_settings?.userName || "User"}
+                    userProfileImage={activeSession?.settings.client_settings?.userProfileImage || ""}
+                />
             </ErrorBoundary>
         </div>
     );
@@ -91,15 +91,6 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         if (!cardDetails.sessionId || cardDetails.sessionId === session_id) {
             return;
         }
-        updateSessionId(cardDetails.sessionId);
-        const session = getActiveSession();
-        if (session) {
-            setActiveCardId(cardDetails.sessionId);
-            setActiveSession(session);
-        }
-        // Load the new active session chats
-        const history = session?.fetchLatestChats() || [];
-        history.then((res: ChatCardProps[]) => setChats(res));
     }
 
     function handleChatScroll(e: React.UIEvent<HTMLDivElement>) {
@@ -119,10 +110,9 @@ const ChatBotAI = (props: ChatBotAIProps) => {
 
     function handleChatScrollTop() {
         // handle scroll top event
-        const session = getActiveSession();
         const oldest_chat = chats[chats.length - 1];
-        if (session && oldest_chat && oldest_chat.chatId) {
-            session.fetchPreviousChats(oldest_chat.chatId).then((chats: ChatCardProps[]) => {
+        if (activeSession && oldest_chat && oldest_chat.chatId) {
+            activeSession.fetchPreviousChats(oldest_chat.chatId).then((chats: ChatCardProps[]) => {
                 const oldChats = chats.filter((chat: ChatCardProps) => !chats.find((c: ChatCardProps) => c.chatId === chat.chatId));
                 setChats([...chats, ...oldChats]);
             });
@@ -133,9 +123,8 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         if (!sessionId) {
             createNewChat();
         }
-        const session = getActiveSession();
-        if (session) {
-            session.sendChat({message}).then((chat: ChatCardProps) => {
+        if (activeSession) {
+            activeSession.sendChat({message}).then((chat: ChatCardProps) => {
                 setChats([...chats, chat]);
             }
         );
@@ -172,12 +161,10 @@ const ChatBotAI = (props: ChatBotAIProps) => {
 
     function updateSessionId(sessionId: string) {
         setSessionId(sessionId);
+        setActiveSession(manager.activeSessions.get(sessionId));
+        setActiveCardId(sessionId);
         manager.activeSessionId = sessionId;
         return manager.activeSessionId;
-    }
-
-    function getActiveSession() {
-        return manager.activeSessions.get(session_id) || createNewChat();
     }
 
     function createNewChat() {
