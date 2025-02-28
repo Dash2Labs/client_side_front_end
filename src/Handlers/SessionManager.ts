@@ -1,10 +1,10 @@
-import Session from './Session';
+import Session from './Session.ts';
 import Communicator from './Communicator.ts';
 import { HistoryCardProps } from 'chatbot-ai-lib';
 import { v4 as uuidv4 } from 'uuid';
 
 class SessionManager {
-    public activeSessions = {} as Map<string, Session>;
+    public activeSessions = new Map<string, Session>();
     public defaultSessionId: string = "6d7312db-c7fa-4cac-8937-bbf3a60102ad";
     public activeSessionId: string = "";
     private _communicator: Communicator = new Communicator(uuidv4(), "session_manager");
@@ -18,9 +18,10 @@ class SessionManager {
      */
     public async validActiveSession(session_id: string): Promise<boolean> {
         if (this._sessionInCache(session_id)) {
-            const valid = this.activeSessions[session_id].expiresAt > new Date();
+            const session = this.activeSessions.get(session_id);
+            const valid = session ? session.expiresAt > new Date() : false;
             if (!valid) {
-                delete this.activeSessions[session_id];
+                this.activeSessions.delete(session_id);
                 return new Promise<boolean>((resolve) => resolve(false));
             }
         }
@@ -70,7 +71,7 @@ class SessionManager {
      * @param {string} session_id
      */
     private _addLocalActiveSession(session_id: string) {
-        this.activeSessions[session_id] = new Session(this, session_id);
+        this.activeSessions.set(session_id, new Session(this, session_id));
     }
 
     /**

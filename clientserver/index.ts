@@ -9,7 +9,7 @@
 import express from 'express';
 import http from 'http';
 import https from 'https';
-import { resolvePath, _dirname_ } from './common_imports.js';
+import { resolvePath, _dirname_, fs } from './common_imports.js';
 import logger from 'morgan';
 import compression from 'compression';
 import bodyParser from 'body-parser';
@@ -17,6 +17,17 @@ import serveStatic from './serve_static.js';
 import session from './routes/session.js';
 import api from './routes/api.js';
 import root from './routes/root.js';
+import dotenv from 'dotenv';
+
+
+// Load environment variables from .env file
+const result = dotenv.config({ path: ".env" });
+
+if (result.error) {
+    console.error("Error loading .env file:", result.error);
+} else {
+    console.log(".env file loaded successfully");
+}
 
 let dev = true;
 if (process.env.NODE_ENV === 'production') {
@@ -28,6 +39,8 @@ if (process.env.NODE_ENV === 'production') {
 
 const APP = express();
 const PORT = process.env.PORT || 3000;
+const HTTPS_PORT = process.env.HTTPS_PORT || 8443;
+const URL = process.env.URL || 'https://localhost';
 
 APP.use((req, res, next) => {
     if (req.secure) {
@@ -46,17 +59,16 @@ APP.use(compression());
 APP.use(serveStatic([resolvePath('@public'), resolvePath('@assets')]));
 
 const SERVER = http.createServer(APP);
-console.log(resolvePath('@certs/key.pem'));
-console.log(resolvePath('@certs/cert.pem'));
+
 const HTTPS_SERVER = https.createServer({
-    key: resolvePath('@certs/chat_private.key'),
-    cert: resolvePath('@certs/chat_cert.pm')
+    key: fs.readFileSync(resolvePath('@certs/chat_server.key')),
+    cert: fs.readFileSync(resolvePath('@certs/chat_server.cert'))
 }, APP);
 
 SERVER.listen(PORT, () => {
-    console.log(`Server is running on ${process.env.URL}:${PORT} in ${process.env.NODE_ENV} mode`);
+    console.log(`Server is running on ${URL}:${PORT} in ${process.env.NODE_ENV} mode`);
 });
 
-HTTPS_SERVER.listen(443, () => {
-    console.log(`HTTPS Server is running on ${process.env.URL}:443 in ${process.env.NODE_ENV} mode`);
+HTTPS_SERVER.listen(HTTPS_PORT, () => {
+    console.log(`HTTPS Server is running on ${URL}:${HTTPS_PORT} in ${process.env.NODE_ENV} mode`);
 });

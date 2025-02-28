@@ -1,10 +1,8 @@
 import path from 'path';
-import dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import pkg from "webpack";
 const { DefinePlugin } = pkg;
-dotenv.config();
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
@@ -29,6 +27,7 @@ let __MAX_LENGTH__;
 let __EXPIRATION_TIME__;
 let __USEAUTH__;
 let __DEBUG__;
+let __USE_AZURE__;
 
 const loadCustomerSettings = function () {
     // Read customer settings from a json file
@@ -47,6 +46,7 @@ const setupClientServer = function () {
             __SERVER__ = "http://localhost:3000";
             __REDIRECT_URI__ = `${__SERVER__}/redirect.html`;
             __DEBUG__ = true;
+            process.env.URL = "http://localhost"
             console.log("development", __SERVER__, __REDIRECT_URI__)
             break;
         case 'production':
@@ -76,6 +76,7 @@ const setupClientServer = function () {
     __MAX_LENGTH__ = config.maxLength;
     __EXPIRATION_TIME__ = config.expirationTime;
     __USEAUTH__ = config.useAuth;
+    __USE_AZURE__ = config.useAzure;
 };
 
 setupClientServer();
@@ -127,7 +128,8 @@ const common = function (env, argv) {
             "__MAX_LENGTH__":JSON.stringify(__MAX_LENGTH__),
             "__EXPIRATION_TIME__": JSON.stringify(__EXPIRATION_TIME__),
             "__USEAUTH__": JSON.stringify(__USEAUTH__),
-            "__DEBUG__": JSON.stringify(__DEBUG__)
+            "__DEBUG__": JSON.stringify(__DEBUG__),
+            "__USE_AZURE__": JSON.stringify(__USE_AZURE__)
         }),
         new FileManagerPlugin(
             {

@@ -2,9 +2,7 @@
   "version": "v1",
   "packages": {
     "chatbot-ai-lib": {
-      "signature": "6534fc41dac9319f94062d901ddb65b4",
-      "file": true,
-      "replaced": "^1.1.7"
+      "signature": "2dc7817d485f9cb82bf71c7165ca8cae"
     }
   }
 }

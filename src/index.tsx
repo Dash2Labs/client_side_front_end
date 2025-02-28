@@ -1,11 +1,11 @@
 import { createRoot } from 'react-dom/client';
 import App from './app.tsx';
-import { constants } from './constants.js';
 import { EventType, AccountInfo, EventMessage } from '@azure/msal-browser';
 import { msalInstance } from './Authorization/MsalInstance.ts';
 import React from 'react'; // eslint-disable-line
+import { dangerousConstants } from './constants.js';
 
-if (constants.useauth === true) {
+if (dangerousConstants.useauth === true) {
   msalInstance.initialize().then(() => {
     // If a user is already logged in, set the active account
     if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0) {

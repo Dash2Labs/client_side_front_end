@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { act } from 'react';
 import { FullChatbot, ChatCardProps, HistoryCardProps } from "chatbot-ai-lib";
-import Session from './Handlers/Session';
-import SessionManager from './Handlers/SessionManager';
-import { constants } from  './constants';
-import { getMyId } from './Authorization/Msgraph';
+import Session from './Handlers/Session.ts';
+import SessionManager from './Handlers/SessionManager.ts';
+import { constants } from  './constants.js';
+import exprts from './Authorization/GenericGraph.ts';
+import LoginCard from './Components/LoginCard.ts';
+import { ErrorBoundary } from 'react-error-boundary';
 
 interface ChatBotAIProps {
     manager: SessionManager;
@@ -11,19 +13,16 @@ interface ChatBotAIProps {
 
 const ChatBotAI = (props: ChatBotAIProps) => {
     const manager = props.manager;
-    const user = new User();
+    const [activeSession, setActiveSession] = React.useState(manager.activeSessions.get(manager.activeSessionId));
     const [session_id, setSessionId] = React.useState(manager.activeSessionId);
     const [chats, setChats] = React.useState<ChatCardProps[]>([]);
     const [session_history, setSessionHistory] = React.useState<HistoryCardProps[]>([]);
     React.useEffect(() => {
-        if (constants.useauth === true && !getMyId()) {
-            if (login()) {
-
-            }
+        if (manager.activeSessionId === manager.defaultSessionId ||
+            exprts.getMyId() === undefined ||
+            exprts.getMyId() === "") {
+            return;
         }
-
-    });
-    React.useEffect(() => {
         const fetchSessionHistory = async () => {
             const summaries = (await manager.getSessionHistorySummaries()) || [];
             setSessionHistory(summaries);
@@ -31,21 +30,32 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         fetchSessionHistory();
     }, []);
     React.useEffect(() => {
-        const fetchChats = async () => {
-            getActiveSession().fetchLatestChats().then((chats) => setChats(chats));
-            setChats(chats);
+        let fetchChats: () => Promise<void>;
+        if (manager.activeSessionId === manager.defaultSessionId ||
+            exprts.getMyId() === "" ||
+            exprts.getMyId() === undefined
+        ) {
+            setChats([LoginCard()]);
+        }
+        fetchChats = async () => {
+            activeSession?.fetchLatestChats().then((chats: ChatCardProps[]) => setChats(chats));
         };
         fetchChats();
     }, []);
 
     const chatbot =  (
         <div style={{ height: "100vh" }}>
+            <ErrorBoundary
+                FallbackComponent={() => <div>Error loading chatbot</div>}
+                onError={(error, info) => {
+                    console.error("Error loading chatbot: ", error, info);
+                }}> 
             <FullChatbot
-                aiName={getActiveSession().settings.client_settings?.aiName || "AI"}
-                aiProfileImage={getActiveSession().settings.client_settings?.aiProfileImage || ""}
+                aiName={activeSession?.settings.client_settings?.aiName || "AI"}
+                aiProfileImage={activeSession?.settings.client_settings?.aiProfileImage || ""}
                 chats={chats}
-                compactLogo={getActiveSession().settings.client_settings?.compactLogo || ""}
-                fullLogo={getActiveSession().settings.client_settings?.fullLogo || ""}
+                compactLogo={activeSession?.settings.client_settings?.compactLogo || ""}
+                fullLogo={activeSession?.settings.client_settings?.fullLogo || ""}
                 handleActionCardClick={handleActionCardClick}
                 history={session_history}
                 isMobile={false}
@@ -64,14 +74,14 @@ const ChatBotAI = (props: ChatBotAIProps) => {
                 onStarClick={handleStarClick}
                 onTextFeedbackSubmit={handleTextfeedbackSubmit}
                 sessionId={session_id}
-                userName={getActiveSession().settings.client_settings?.userName || "User"}
-                userProfileImage={getActiveSession().settings.client_settings?.userProfileImage || ""}
+                userName={activeSession?.settings.client_settings?.userName || "User"}
+                userProfileImage={activeSession?.settings.client_settings?.userProfileImage || ""}
             />
+            </ErrorBoundary>
         </div>
     );
 
     return chatbot;
-
 
     function handleActionCardClick() {
         // handle action card click event
@@ -85,10 +95,11 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         const session = getActiveSession();
         if (session) {
             setActiveCardId(cardDetails.sessionId);
+            setActiveSession(session);
         }
         // Load the new active session chats
         const history = session?.fetchLatestChats() || [];
-        history.then((res) => setChats(res));
+        history.then((res: ChatCardProps[]) => setChats(res));
     }
 
     function handleChatScroll(e: React.UIEvent<HTMLDivElement>) {
@@ -111,8 +122,8 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         const session = getActiveSession();
         const oldest_chat = chats[chats.length - 1];
         if (session && oldest_chat && oldest_chat.chatId) {
-            session.fetchPreviousChats(oldest_chat.chatId).then((chats) => {
-                const oldChats = chats.filter((chat) => !chats.find((c) => c.chatId === chat.chatId));
+            session.fetchPreviousChats(oldest_chat.chatId).then((chats: ChatCardProps[]) => {
+                const oldChats = chats.filter((chat: ChatCardProps) => !chats.find((c: ChatCardProps) => c.chatId === chat.chatId));
                 setChats([...chats, ...oldChats]);
             });
         }
@@ -124,7 +135,7 @@ const ChatBotAI = (props: ChatBotAIProps) => {
         }
         const session = getActiveSession();
         if (session) {
-            session.sendChat({message}).then((chat) => {
+            session.sendChat({message}).then((chat: ChatCardProps) => {
                 setChats([...chats, chat]);
             }
         );

@@ -25,5 +25,5 @@
             "@certs/*": ["../build/*"]
         }
     },
-    "exclude": ["node_modules", "dist", "build", "public", "__tests__", "__mocks__"]
+    "exclude": ["node_modules", "dist", "build", "public"]
 }

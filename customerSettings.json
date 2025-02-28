@@ -13,5 +13,6 @@
     "maxLength": 1000,
     "expirationTime": 300000,
     "useAuth": false,
-    "customerSettings": {}
+    "customerSettings": {},
+    "useAzure": true
 }

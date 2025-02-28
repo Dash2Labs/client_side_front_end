@@ -13,7 +13,7 @@ import { FeedbackObject } from '../Models/Feedback.ts';
 import ChatHistory from './ChatHistory.ts';
 import Settings, { SettingsObject, defaultSettings } from './Settings.ts';
 import User from '../Models/User.ts';
-import { constants } from '../constants.js';
+import { constants, dangerousConstants } from '../constants.js';
 import AuthorizationError from '../Authorization/Errors/AuthorizationError.ts';
 import SessionError, { ChatSessionError, SettingsSessionError }  from './Errors/SessionError.ts';
 import Communicator from './Communicator.ts';
@@ -62,10 +62,10 @@ export default class Session {
                         try {
                             this._initialize(session_id);
                             this.createdAt = new Date();
-                            this.expiresAt = new Date(this.createdAt.getTime() + constants.expirationTime);
+                            this.expiresAt = new Date(this.createdAt.getTime() + dangerousConstants.expirationTime);
                         }
                         catch (error) {
-                            if (constants.debug) {
+                            if (dangerousConstants.debug) {
                                 console.error(error);
                             }
                             else {
@@ -81,11 +81,11 @@ export default class Session {
                         }
                     }
                     else {
-                        return manager.activeSessions[session_id];
+                        return manager.activeSessions.get(session_id) as Session;
                     }
                 })
                 .catch((error) => {
-                    if (constants.debug) {
+                    if (dangerousConstants.debug) {
                         console.error(error);
                     }
                     else {
@@ -110,18 +110,18 @@ export default class Session {
      * @returns {Message} the response message from the server
      */
     public async sendChat(question: ChatObject): Promise<ChatCardProps> {
-        if (question.message.length === 0 || getSizeInBytes(question) > constants.maxLength) {
+        if (question.message.length === 0 || getSizeInBytes(question) > dangerousConstants.maxLength) {
             throw new ChatSessionError("Invalid Question Length");
         }
         question.message = xss(question.message);
         return this._chat.sendChat(question).then((chat) => {
             return {
                 // user details
-                aiName: this._aiName,
-                aiProfileImage: this._aiProfile_image,
+                aiName: this.settings.client_settings.aiName,
+                aiProfileImage: this.settings.client_settings.aiProfile_image,
                 isProfileImageRequired: constants.requireProfileImage,
-                userName: this._user.user_id as string,
-                userProfileImage: this._user.photo as string,
+                userName: this._user.userName || "Guest",
+                userProfileImage: this._user.photo || constants.defaultProfileImage,
 
                 //Basic details
                 chatId: chat.chat_id,
@@ -150,7 +150,7 @@ export default class Session {
      * @returns {boolean} indicating success or failure of the operation
      */
     public sendFeedback(fb: FeedbackObject): boolean {
-        if (getSizeInBytes(fb) > constants.maxLength) {
+        if (getSizeInBytes(fb) > dangerousConstants.maxLength) {
             console.error("Feedback too long"); // won't throw for feedback error
         }
 
@@ -205,17 +205,20 @@ export default class Session {
 
                         //Basic details
                         chatId: chat.chat_id,
-                        feedback: chat.feedback,
+                        feedback: chat.feedback ? chat.feedback : "",
                         onStarClick: this.handleStarClick,
                         onTextFeedbackSubmit: this.handleTextFeedbackSubmit,
-                        rating: chat.rating,
-                        ratingEnabled: constants.ratingsEnabled,
+                        rating: chat.rating ? chat.rating : 0,
+                        ratingEnabled: chat.sender === "user" ? false : constants.ratingsEnabled,
                         sender: chat.sender,
                         sessionId: chat.session_id,
                         text: chat.message,
-                        textFeedbackEnabled: constants.textFeedbackEnabled,
+                        textFeedbackEnabled: chat.sender === "user" ? false : constants.textFeedbackEnabled,
                         timestamp: chat.timestamp,
                         type: chat.type,
+
+                        // Files and annotations
+                        // TODO: Add files and annotations
                     } as ChatCardProps;
             });
             return chat_history;
@@ -279,7 +282,7 @@ export default class Session {
     * @find description of the user object in the User class
     */
     private async _initializeUser() {
-        if (!this._user && constants.useauth)
+        if (!this._user && dangerousConstants.useauth)
         {
             this._user = new User(false); // populate user from auth
         }

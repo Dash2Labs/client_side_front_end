@@ -7,7 +7,7 @@
  * @author Dustin Morris
  */
 import axios, { AxiosRequestConfig, AxiosHeaders, AxiosResponse } from "axios";
-import { FeedbackObject } from "./Feedback.ts";
+import { FeedbackObject } from "../Models/Feedback.ts";
 import { ChatHistoryObject } from "./ChatHistory.ts";
 import { ChatObject } from "./Chat.ts";
 import { SettingsObject } from "./Settings.ts";
