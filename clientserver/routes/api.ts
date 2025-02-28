@@ -10,7 +10,7 @@
 import { express, axios, constants, handleResponse, checkSession, addCommonHeaders } from '../common_imports.js';
 import { sizeLimit, xssCheck } from '../middleware/middleware.js';
 import er from '../errors.js';
-import { FeedbackObject } from '../../src/Models/Feedback.js';
+import { FeedbackObject } from '../Models/Feedback.js';
 
 interface ChatObject {
     question: string;
@@ -80,6 +80,17 @@ api.get('/chats/:session_id', (req, res) => {
         // TODO: Add logging here
     });
 });
+
+api.get('/session/summaries', (req, res) => {
+    let options = addCommonHeaders(req);
+
+    ax.get(`${constants.server}/api/summaries`, options).then((response) => {
+        handleResponse(res, response, options.headers['correlation-id']);
+    }).catch(() => {
+        res.status(500).send(er.serverError);
+    });
+});
+
 
 api.get('/settings', (req, res) => {
     let options = addCommonHeaders(req);

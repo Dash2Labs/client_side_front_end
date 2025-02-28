@@ -5,4 +5,4 @@ export interface FeedbackObject {
     chatId: string; // The ID of the chat 
   }
 
-// Keep in sync with clientserver/Models/Feedback.ts
+// Keep in sync with src/Models/Feedback.ts

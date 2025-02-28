@@ -10,18 +10,22 @@
 import { loginRequest, graphConfig } from "./Config.ts";
 import { msalInstance } from "./MsalInstance.ts";
 
+export async function getAccessToken() {
+    const account = msalInstance.getActiveAccount();
+    if (!account) {
+        throw Error("No active account! Verify a user has been signed in and setActiveAccount has been called.");
+    }
+
+    const response = await msalInstance.acquireTokenSilent({
+        ...loginRequest,
+        account: account
+    });
+
+    return response.accessToken;
+}
 export async function callMsGraph(accessToken: string | null, getPhoto: boolean = false) {
     if (!accessToken) {
-        const account = msalInstance.getActiveAccount();
-        if (!account) {
-            throw Error("No active account! Verify a user has been signed in and setActiveAccount has been called.");
-        }
-
-        const response = await msalInstance.acquireTokenSilent({
-            ...loginRequest,
-            account: account
-        });
-        accessToken = response.accessToken;
+        getAccessToken().then(token => accessToken = token);
     }
 
     const headers = new Headers();
@@ -59,6 +63,6 @@ export async function getProfile(accessToken: string | null) {
     return callMsGraph(accessToken, true);
 }
 
-export async function getMyId() {
+export function getMyId() {
     return msalInstance.getActiveAccount()?.homeAccountId;
 }

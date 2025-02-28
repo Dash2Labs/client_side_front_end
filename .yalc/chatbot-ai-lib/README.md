@@ -46,7 +46,7 @@ To use the complete chatbot suite in your application, import and render the `Ch
 
 ```tsx
 import React from "react";
-import FullChatbot from "your-library-name"; // Replace 'your-library-name' with the actual name of the library
+import ChatbotSuite from "your-library-name"; // Replace 'your-library-name' with the actual name of the library
 
 const App: React.FC = () => {
   const handleChatSubmit = (message: string) => {
@@ -59,7 +59,7 @@ const App: React.FC = () => {
 
   return (
     <div style={{ height: "100vh" }}>
-      <FullChatbot
+      <ChatbotSuite
         history={[
           { title: "Chat 1", timeStamps: new Date(), isActive: true },
           { title: "Chat 2", timeStamps: new Date(), isActive: false },

@@ -8,7 +8,7 @@
  */
 
 import { LogLevel, Configuration } from "@azure/msal-browser";
-import { constants } from "../constants.js";
+import { dangerousConstants } from "../constants.js";
 
 // Browser check variables
 // If you support IE, our recommendation is that you sign-in using Redirect APIs
@@ -26,9 +26,9 @@ const isFirefox: boolean = firefox > 0; // Only needed if you need to support th
 // Config object to be passed to Msal on creation
 export const msalConfig: Configuration = {
     auth: {
-        clientId: constants.app_id,
-        authority: constants.app_authority,
-        redirectUri: constants.redirect_uri,
+        clientId: dangerousConstants.app_id,
+        authority: dangerousConstants.app_authority,
+        redirectUri: dangerousConstants.redirect_uri,
         postLogoutRedirectUri: "/",
     },
     cache: {

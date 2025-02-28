@@ -15,8 +15,8 @@
     "copy-js": "copyfiles -u 1 'clientserver/**/*.js' dist",
     "copy-json": "copyfiles -u 1 'clientserver/**/*.json' dist",
     "encrypt": "./node_modules/.bin/dotenvx encrypt -f clientserver/.env.local && ./node_modules/.bin/dotenvx encrypt -f clientserver/.env.production && ./node_modules/.bin/dotenvx encrypt -f .env",
-    "lstart": "npm run build && npm run encrypt && dotenvx run -f clientserver/.env.local -- nodemon --watch clientserver --exec npx tsx clientserver/index.ts",
-    "start": "dotenvx run -f ./dist/.env.production -- node dist/index.js"
+    "lstart": "npm run build && npx tsx clientserver/index.ts",
+    "start": "node dist/index.js"
   },
   "author": "Dustin Morris",
   "license": "ISC",
@@ -33,7 +33,7 @@
     "@mui/material": "latest",
     "@types/uuid": "^10.0.0",
     "axios": "^1.7.7",
-    "chatbot-ai-lib": "file:.yalc/chatbot-ai-lib",
+    "chatbot-ai-lib": "^1.1.7",
     "compression": "^1.7.5",
     "cors": "^2.8.5",
     "express": "^4.21.1",
@@ -42,6 +42,8 @@
     "react": "latest",
     "react-chatbotify": "^2.0.0-beta.24",
     "react-dom": "latest",
+    "react-error-boundary": "^5.0.0",
+    "react-router-dom": "^7.2.0",
     "uuid": "^11.0.3",
     "xss": "^1.0.15"
   },

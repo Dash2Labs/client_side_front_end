@@ -36,6 +36,8 @@ Server/.server
 
 *.d.ts
 !*constants.d.ts
+!**/allConstants.js
+!allConstants.d.ts
 public/*
 out/*
 
